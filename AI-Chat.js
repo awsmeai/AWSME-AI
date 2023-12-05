@@ -24,6 +24,7 @@ const AIFirstGreeting = chatStyle["greetingText"];
 const triggerLabel = chatStyle["triggerText"];
 const headline = chatStyle["headline"];
 const paragraph = chatStyle["paragraph"];
+const chatPlaceholder = chatStyle["chatInputText"];
 
 // Styling 
 const botImgUrl = chatStyle["aiImage"];
@@ -35,7 +36,13 @@ const headTextCol = chatStyle["headerTextCol"];
 const chatBgCol = chatStyle["windowBgCol"];
 const chatTextCol = chatStyle["windowTextCol"];
 const inputBgCol = chatStyle["chatBgCol"];
-const inputTextCol = chatStyle["chatTextCol"];
+const inputTextCol = chatStyle["chatTextCol"]; 
+const closeNormalCol = chatStyle["closeNormalCol"];
+const closeHoverCol = chatStyle["closeHoverCol"];
+const scoreIconNormalCol = chatStyle["scoreIconNormalCol"];
+const scoreIconActiveCol = chatStyle["scoreIconActiveCol"];
+const linkNormalCol = chatStyle["linkNormalCol"];
+const linkHoverCol = chatStyle["linkHoverCol"];
 // -------------------------
 
 // Applying dynamic style here
@@ -48,34 +55,52 @@ var dynamicAddedCSS = `.awsme-ai-chat .trigger {
     }
     .awsme-ai-chat .top-area {
       background: ${headBgCol};
-    }
-    .awsme-ai-chat .sidebar-title {
       color: ${headTextCol};
+    }
+    .awsme-ai-chat .sidebar-inner {
+      background: ${chatBgCol};
+    }
+    .awsme-ai-chat .chat-row-wrapper .message {
+      color: ${chatTextCol};
     }
     .awsme-ai-chat .chat-input {
       background: ${inputBgCol};
     }
-    .awsme-ai-chat .review-options i {
-      color: ${inputTextCol};
-    }
-    .awsme-ai-chat .user-input {
-      color: ${inputTextCol}; 
-    }
+    .awsme-ai-chat .user-input,
     .awsme-ai-chat .user-input::placeholder,
     .awsme-ai-chat .user-input::-moz-placeholder,
     .awsme-ai-chat .user-input::-webkit-input-placeholder,
     .awsme-ai-chat .user-input::-ms-input-placeholder {
-      color: ${chatTextCol};
+      color: ${inputTextCol}; 
     }
-    .awsme-ai-chat .sidebar {
-      background: ${chatBgCol};
+    .awsme-ai-chat .send-icon svg {
+      fill: ${inputTextCol}; 
+    }
+    .close-x svg {
+      fill: ${closeNormalCol};
+    }
+    .close-x svg:hover {
+      fill: ${closeHoverCol};
     }
     .awsme-ai-chat .bot .profile {
       background-image: url(${botImgUrl});
     }
     .awsme-ai-chat .user .profile {
       background-image: url(${visitorImgUrl});
-    }`;
+    }
+    .awsme-ai-chat .review-options svg {
+      fill: ${scoreIconNormalCol};
+    }
+    .awsme-ai-chat .review-options .active-icon svg {
+      fill: ${scoreIconActiveCol} !important;
+    }
+    .awsme-ai-chat .cta-callout-label {
+      color: ${linkNormalCol};
+    }
+    .awsme-ai-chat .cta-callout-label:hover {
+      color: ${linkHoverCol};
+    }
+    `;
 
 newStyleTag.textContent = dynamicAddedCSS;
 document.head.appendChild(newStyleTag);
@@ -94,6 +119,9 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       <div class="sidebar-title">
         ${headline}
       </div>
+      <div class="top-paragraph">
+        ${paragraph}
+      </div>
     </div>
 
     <div class="sidebar-inner">
@@ -102,7 +130,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
 
       <div class="input-area">
         <div class="chat-input">
-          <textarea class="user-input" type="text" placeholder="${paragraph}"></textarea>
+          <textarea class="user-input" type="text" placeholder="${chatPlaceholder}"></textarea>
           <div class="send-icon"><i class="fa-regular fa-paper-plane" style="font-size: 1em; color: gray;"></i></div>
         </div>
         <p class="input-note">
@@ -394,11 +422,13 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
           for (var i = 0; i < icons.length; i++) {
             var icon = icons[i].querySelector("span");
             icon.classList.remove('fa-solid');
+            icon.classList.remove('active-icon');
             icon.classList.add('fa-light');
           }
           icon = element.querySelector("span");
           icon.classList.remove('fa-light');
           icon.classList.add('fa-solid');
+          icon.classList.add('active-icon');
         });
       });
     }
