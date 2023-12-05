@@ -16,7 +16,7 @@
 .trigger {
   cursor: pointer !important;
   padding: 15px;
-  color: #fff;
+  font-size: 16px;
   position: fixed;
   right: 0px;
   -webkit-border-radius: 5px 0 0 5px;
@@ -45,7 +45,6 @@
     font-size: 24px;
 }
 
-
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -60,7 +59,6 @@
   right: -580px;
 }
 
-
 .sidebar-inner {
   display: flex;
   align-content: end;
@@ -73,8 +71,8 @@
   display: flex;
   flex-wrap: wrap;
   width: 100%;
-  background: #00A4BD;
   height: fit-content;
+  padding: 15px 20px;
 }
 
 .close-x {
@@ -85,13 +83,17 @@
 }
 .close-x svg {
   cursor: pointer !important;
-  fill: #fff;
   width: 20px;
   right: 15px;
 }
 .sidebar-title {
   width: 100%;
-  padding: 0 30px 15px 30px;
+  font-size: 24px;
+}
+.top-paragraph {
+ width: 100%;
+ font-weight: normal;
+ font-size: 16px;
 }
 
 .chat-area {
@@ -103,11 +105,10 @@
   margin-bottom: 30px;
   overflow-y: scroll;
   height: -webkit-fill-available;
-}
-.chat-area {
-  padding: 10px 20px;
+  padding: 20px;
   width: 100%;
 }
+
 .input-area {
   width: 100%;
   padding: 0px 20px;
@@ -116,7 +117,6 @@
 .chat-input {
   display: flex;
   align-items: center;
-  background: #ededed;
   border-radius: 5px;
   padding: 10px;
   display: flex;
@@ -132,7 +132,7 @@
   resize: none;  
   overflow-y: hidden; 
   width: 100%;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 
@@ -142,7 +142,6 @@
 }
 .send-icon svg {
  width: 20px;
-  fill: #999;
 }
 .input-note {
   width: 100%;
@@ -155,7 +154,7 @@
   width: 100%;
   display: flex;
   flex-wrap: nowrap;
-  column-gap: 15px;
+  column-gap: 10px;
   position: relative;
 }
 .review-row, .review-options {
@@ -196,8 +195,8 @@
   flex: 1;       
   padding: 5px;   
   overflow-wrap: break-word; 
-  font-weight: 400;
-  font-size: 16px;
+  font-weight: normal;
+  font-size: 18px;
 }
 .thumbs-up, .neutral, .thumbs-down {
   margin-right: 10px;
