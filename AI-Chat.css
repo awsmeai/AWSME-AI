@@ -131,6 +131,8 @@
   min-height: 20px !important;
   resize: none;  
   overflow-y: hidden; 
+  width: 100%;
+  font-size: 16px;
 }
 
 
@@ -195,6 +197,7 @@
   padding: 5px;   
   overflow-wrap: break-word; 
   font-weight: 400;
+  font-size: 16px;
 }
 .thumbs-up, .neutral, .thumbs-down {
   margin-right: 10px;
