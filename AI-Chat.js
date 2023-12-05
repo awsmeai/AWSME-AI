@@ -228,7 +228,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
                   <div class="message-col">
                     <p class="message" id=${id}>${text}</p> 
                     <div class="review-options">
-                      <div class="thumbs-up">${reviewIcons[0]}</i></div>
+                      <div class="thumbs-up">${reviewIcons[0]}</div>
                       <div class="neutral">${reviewIcons[1]}</div>
                       <div class="thumbs-down">${reviewIcons[2]}</div>
                     </div>
