@@ -446,6 +446,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
             }
             else if (element.className.includes("thumbs-down")) {
               element.innerHTML = reviewIconsSolid[2]
+            }
         });
       });
     }
