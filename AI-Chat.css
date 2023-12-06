@@ -279,7 +279,9 @@
   display: flex; width: 100%;
   white-space: inherit;
 }
-
+.video-action {
+    padding: 15px 0;
+}
 .cta-callout-label {
   font-weight: bold;
 }
