@@ -246,6 +246,27 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       }
       return row;
     }
+
+    function getIframeFromUrl(url) {
+      let newUrl = '';
+      const vimeoRegex = /https:\/\/vimeo\.com\/(\d+)/;
+      const vimeoMatch = url.match(vimeoRegex);
+      if (vimeoMatch) {
+          const vimeoId = vimeoMatch[1];
+          newUrl = `https://player.vimeo.com/video/${vimeoId}`;
+      }
+      const youtubeRegex = /https:\/\/youtu\.be\/([\w-]+)/;
+      const youtubeMatch = url.match(youtubeRegex);
+      if (youtubeMatch) {
+          const youtubeId = youtubeMatch[1];
+          newUrl = `https://youtube.com/embed/${youtubeId}`;
+      }
+      if (newUrl != "") {
+        let iframe = `<iframe src="${newUrl}" class="video-action" width="480" height="270"></iframe>`;
+        return iframe;
+      }
+      return "";
+    }
     
     function responseHTMLModifier(string, className, action_data) {
       let action_id = action_data[0]
@@ -253,11 +274,17 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       if (action_id.length == 20) {
         let action_url = action_data[1]
         let action_cta = action_data[2]
+        let action_type = action_data[3]     
         updateMetric("", "actions", action_id, "views")
-        
-        let ctaHTML = `<a class="${className} cta-callout" href="${action_url}" target="_blank"onclick="updateMetric('', 'actions', sub_doc_ref='${action_id}', 'clicks')">
-          <span class="cta-callout-label">${action_cta}</span>
-          </a>`
+
+        if (action_type == "link") {
+          let ctaHTML = `<a class="${className} cta-callout" href="${action_url}" target="_blank"onclick="updateMetric('', 'actions', sub_doc_ref='${action_id}', 'clicks')">
+            <span class="cta-callout-label">${action_cta}</span>
+            </a>`
+        }
+        else if (action_type == "video") {
+          let ctaHTML = getIframeFromUrl(action_url);
+        }
         stringList.push(ctaHTML);
       }
       return stringList;
