@@ -274,14 +274,53 @@
 }
 
 
+/* Rich media elements css */
 .cta-callout {
   padding: 15px 0; 
   display: flex; width: 100%;
   white-space: inherit;
 }
+.cta-callout-label {
+  font-weight: bold;
+}
+
 .video-action {
     padding: 15px 0;
 }
-.cta-callout-label {
-  font-weight: bold;
+
+.email-form-wrapper {
+ background-color: #f9f9f9;
+  border: 1px solid #eeeeee;
+  padding: 8px;
+  width: fit-content;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+.email-form {
+    display: flex;
+    align-items: center;
+}
+.email-form input[type=email] {
+    padding: 10px;
+    margin-right: 0px;
+    border: 1px solid #ccc;
+    border-right: none;
+    -webkit-border-radius: 5px 0 0 5px;
+    border-radius: 5px 0 0 5px;
+}
+.email-form button {
+    padding: 9px 10px 10px;
+    background-color: #BE0BB3;
+    color: #fff;
+    border: none;
+    -webkit-border-radius: 0 5px 5px 0;
+  border-radius: 0 5px 5px 0;
+    cursor: pointer;
+}
+.email-form button svg {
+ fill: #fff; 
+  display: flex;
+}
+.email-form button:hover {
+    background-color: #823DA5;
 }
