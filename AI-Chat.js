@@ -473,10 +473,10 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
     
     // Set email capture action
     function setFormAction() {
-      let forms = querySelectorAll(".email-form");
+      let forms = document.querySelectorAll(".email-form");
       if (forms) {
         let form = forms[forms.length-1];
-        form.addEventListener("submit", function() {
+        form.addEventListener("submit", function(event) {
           event.preventDefault();
           let email = this.querySelector("input").value;
           if (!isValidEmail(email)) {
@@ -486,8 +486,8 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
             this.querySelector(".error-con").style.display = "none";
             createLead(email);
             this.querySelector("input").value = "";
-            this.parent.querySelector(".email-form-wrapper").style.display = "block";
-            this.parent.remove();
+            this.parentElement.querySelector(".email-form-wrapper").style.display = "block";
+            this.parentElement.remove();
           }
         })
       }
