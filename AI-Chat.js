@@ -377,7 +377,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       }
 
       let lead_ref = localStorage.getItem('lead_ref') != null ? localStorage.getItem('lead_ref'): "";
-      if (lead_ref == "") {
+      if (lead_ref == "" && askEmail) {
         if (askEmailTrigger == "firstMsg" && questionsAndAnswers.length == 1) {
           stringList.push(emailFormHTML);
         }
