@@ -25,6 +25,11 @@ const triggerLabel = chatStyle["triggerText"];
 const headline = chatStyle["headline"];
 const paragraph = chatStyle["paragraph"];
 const chatPlaceholder = chatStyle["chatInputText"];
+const askEmail = chatStyle["askEmail"];
+const askEmailTrigger = chatStyle["askEmailTrigger"];
+const emailRequestText = chatStyle["emailRequestText"];
+const emailRequestText = chatStyle["emailRequestText"];
+const emailProvidedText = chatStyle["emailProvidedText"];
 
 // Styling 
 const botImgUrl = chatStyle["aiImage"];
@@ -43,6 +48,15 @@ const scoreIconNormalCol = chatStyle["scoreIconNormalCol"];
 const scoreIconActiveCol = chatStyle["scoreIconActiveCol"];
 const linkNormalCol = chatStyle["linkNormalCol"];
 const linkHoverCol = chatStyle["linkHoverCol"];
+const emailBoxBgCol = chatStyle["emailBoxBgCol"];
+const emailBoxBrCol = chatStyle["emailBoxBrCol"];
+const emailInputBgCol = chatStyle["emailInputBgCol"];
+const emailInputBrCol = chatStyle["emailInputBrCol"];
+const emailInputTextCol = chatStyle["emailInputTextCol"];
+const emailSubmitBgCol = chatStyle["emailSubmitBgCol"];
+const emailSubmitBgHoverCol = chatStyle["emailSubmitBgHoverCol"];
+const emailSubmitIconCol = chatStyle["emailSubmitIconCol"];
+const emailSubmitIconHoverCol = chatStyle["emailSubmitIconHoverCol"];
 // -------------------------
 
 // Applying dynamic style here
@@ -100,7 +114,63 @@ var dynamicAddedCSS = `.awsme-ai-chat .trigger {
     .awsme-ai-chat .cta-callout-label:hover {
       color: ${linkHoverCol};
     }
-    `;
+
+    .email-form-wrapper {
+       background-color: ${emailBoxBgCol};
+        border: 1px solid ${emailBoxBrCol};
+        padding: 8px;
+        width: fit-content;
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        width: 250px;
+      }
+      .email-form {
+        display: flex;
+        align-items: center;
+      }
+      .email-form input[type=email] {
+        padding: 10px;
+        margin-right: 0px;
+        border: 1px solid ${emailInputBrCol};
+        background: ${emailInputBgCol};
+        color: ${emailInputTextCol};
+        border-right: none;
+        -webkit-border-radius: 5px 0 0 5px;
+        border-radius: 5px 0 0 5px;
+        width: 100%;
+      }
+      .email-form button {
+        padding: 9px 10px 10px;
+        background-color: ${emailSubmitBgCol};
+        border: none;
+        -webkit-border-radius: 0 5px 5px 0;
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+      }
+      .email-form button:hover {
+        background-color: ${emailSubmitBgHoverCol};
+      }
+      .email-form button svg {
+        fill: ${emailSubmitIconCol}; 
+        display: flex;
+      }
+      .email-form button:hover svg {
+        fill: ${emailSubmitIconHoverCol}; 
+      }
+      .email-form-wrapper p {
+        margin: 0;
+        text-align: center;
+        font-family: arial, san-serif;
+      }
+      .error-con {
+        width: 100%; 
+        margin-top: 5px;
+      }
+      .error-con p {
+        font-size: 12px;
+        color: #E8404A;
+        text-align: left;
+      }`;
 
 newStyleTag.textContent = dynamicAddedCSS;
 document.head.appendChild(newStyleTag);
@@ -140,6 +210,24 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
     </div>
   </div>
 </div>`
+
+
+  const emailFormHTML = `<div class="email-form-wrapper">
+      <form class="email-form">
+        <input type="email" id="email" name="email" placeholder="Email address...">
+        <button type="submit"><svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 512 512"><path d="M3.4 78.3c-6-12-3.9-26.5 5.3-36.3s23.5-12.7 35.9-7.5l448 192c11.8 5 19.4 16.6 19.4 29.4s-7.6 24.4-19.4 29.4l-448 192c-12.3 5.3-26.7 2.3-35.9-7.5s-11.3-24.3-5.3-36.3L92.2 256 3.4 78.3zM120 272L32 448 442.7 272H120zm322.7-32L32 64l88 176H442.7z"/></svg></button>
+      </form>
+      <div class="error-con" style="display:none;">
+          <p>
+            Please enter a valid email address.
+          </p>
+      </div>
+    </div>
+    <div class="email-form-wrapper" style="display: none;">
+      <p>
+        ${emailProvidedText}
+      </p>
+    </div>`
 
 
   var tempDiv = document.createElement("div");
@@ -287,6 +375,20 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
         }
         stringList.push(ctaHTML);
       }
+
+      let lead_ref = localStorage.getItem('lead_ref') != null ? localStorage.getItem('lead_ref'): "";
+      if (lead_ref == "") {
+        if (askEmailTrigger == "firstMsg" && questionsAndAnswers.length == 1) {
+          stringList.push(emailFormHTML);
+        }
+        else if (askEmailTrigger == "secMsg" && questionsAndAnswers.length == 2) {
+          stringList.push(emailFormHTML);
+        }
+        else if (askEmailTrigger == "thrdMsg" && questionsAndAnswers.length == 3) {
+          stringList.push(emailFormHTML);
+        }
+      }
+      
       return stringList;
     }
 
@@ -296,17 +398,13 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
     async function getAIResponse(userMessage) {
       userMessage = userMessage.replace("{", "");
       userMessage = userMessage.replace("}", "");
-      
       let lead_stage = localStorage.getItem('lead_stage') != null ? localStorage.getItem('lead_stage'): "";
       let lead_ref = localStorage.getItem('lead_ref') != null ? localStorage.getItem('lead_ref'): "";
-      
       let newMessage = `{user: ${userMessage}}`;
-
       while (conversation.length + newMessage.length > 3000) {
           conversation = conversation.substring(conversation.indexOf('}') + 1).trim();
       }
       conversation += newMessage;
-
       let new_session;
       if (firstEngagement) {
           new_session = true;
@@ -314,7 +412,6 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       else {
           new_session = false;
       }
-
       let response = await fetch('https://awsme.co/api/call/', {
           method: 'POST',
           headers: {
@@ -328,28 +425,68 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
               new_session: new_session
           }),
       })
-
       response = await response.text();
       response = JSON.parse(response);
-
       let action_data = response.action_data;
       lead_stage = response.lead_stage;
-      lead_ref = response.lead_ref;
-
       localStorage.setItem('lead_stage', lead_stage)
-      if (lead_ref.length > 0) {
-        localStorage.setItem('lead_ref', lead_ref)
-      }
-
       let message = response.response;
       message = message.replace("{", "");
       message = message.replace("}", "");
-
       reviewRefs.push("");
       questionsAndAnswers.push({"question": userMessage, "answer": message})
       conversation += `{assistant: ${message}}`;
-
+      
       return [message, action_data];
+    }
+
+
+    // Create new lead in database
+    async function createLead(email) {
+      let response = await fetch('https://awsme.co/api/create-lead/', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+              email: email, 
+              messages: conversation,
+              user_id: awsmeId
+          }),
+      })
+      response = await response.text();
+      response = JSON.parse(response)
+      lead_ref = response.lead_ref;
+      if (lead_ref.length > 0) {
+          localStorage.setItem('lead_ref', lead_ref)
+      }
+      console.log(response.response)
+    }
+
+    function isValidEmail(email) {
+      const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      return emailRegex.test(email);
+    }
+    
+    // Set email capture action
+    function setFormAction() {
+      let forms = querySelectorAll(".email-form");
+      let form = forms[forms.length-1];
+
+      form.addEventListener("submit", function() {
+        event.preventDefault();
+        let email = this.querySelector("input").value;
+        if (!isValidEmail(email)) {
+          this.querySelector(".error-con").style.display = "block";
+        }
+        else {
+          this.querySelector(".error-con").style.display = "none";
+          createLead(email);
+          this.querySelector("input").value = "";
+          this.parent.querySelector(".email-form-wrapper").style.display = "block";
+          this.parent.remove();
+        }
+      });
     }
 
 
@@ -365,7 +502,6 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       else if (rating == "Bad") {
         updateMetric("numThumbsDown");
       }
-
       let response = await fetch('https://awsme.co/api/save-review/', {
         method: 'POST',
         headers: {
@@ -378,7 +514,6 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
           user_id: awsmeId
         }),
       })
-
       response = await response.text();
       response = JSON.parse(response);
       let message = response.response;
@@ -387,6 +522,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       console.log(message);
     }
 
+    
     async function updateReview(rating, ref) {
       let response = await fetch('https://awsme.co/api/update-review/', {
         method: 'POST',
@@ -404,6 +540,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       console.log(message);
     }
 
+    
     function updateClickEvents() {
       // UPDATE HUBDB WHEN ICON IS PRESSED
       document.querySelectorAll(".thumbs-up").forEach(function(element) {
