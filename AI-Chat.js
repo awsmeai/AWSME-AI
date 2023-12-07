@@ -489,8 +489,8 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
             this.parent.querySelector(".email-form-wrapper").style.display = "block";
             this.parent.remove();
           }
-        }
-      });
+        })
+      }
     }
 
 
