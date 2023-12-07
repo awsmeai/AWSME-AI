@@ -28,7 +28,6 @@ const chatPlaceholder = chatStyle["chatInputText"];
 const askEmail = chatStyle["askEmail"];
 const askEmailTrigger = chatStyle["askEmailTrigger"];
 const emailRequestText = chatStyle["emailRequestText"];
-const emailRequestText = chatStyle["emailRequestText"];
 const emailProvidedText = chatStyle["emailProvidedText"];
 
 // Styling 
