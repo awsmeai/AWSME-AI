@@ -291,6 +291,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
               messageArea.scrollTop = messageArea.scrollHeight;
             }, 200);
             clearInterval(interval);
+            setFormAction();
           }
       }, 20)
       waiting = false
@@ -378,12 +379,15 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       let lead_ref = localStorage.getItem('lead_ref') != null ? localStorage.getItem('lead_ref'): "";
       if (lead_ref == "" && askEmail) {
         if (askEmailTrigger == "firstMsg" && questionsAndAnswers.length == 1) {
+          stringList = [...stringList, "\n", ...emailRequestText.split("")];
           stringList.push(emailFormHTML);
         }
         else if (askEmailTrigger == "secMsg" && questionsAndAnswers.length == 2) {
+          stringList = [...stringList, "\n", ...emailRequestText.split("")];
           stringList.push(emailFormHTML);
         }
         else if (askEmailTrigger == "thrdMsg" && questionsAndAnswers.length == 3) {
+          stringList = [...stringList, "\n", ...emailRequestText.split("")];
           stringList.push(emailFormHTML);
         }
       }
@@ -470,20 +474,21 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
     // Set email capture action
     function setFormAction() {
       let forms = querySelectorAll(".email-form");
-      let form = forms[forms.length-1];
-
-      form.addEventListener("submit", function() {
-        event.preventDefault();
-        let email = this.querySelector("input").value;
-        if (!isValidEmail(email)) {
-          this.querySelector(".error-con").style.display = "block";
-        }
-        else {
-          this.querySelector(".error-con").style.display = "none";
-          createLead(email);
-          this.querySelector("input").value = "";
-          this.parent.querySelector(".email-form-wrapper").style.display = "block";
-          this.parent.remove();
+      if (forms) {
+        let form = forms[forms.length-1];
+        form.addEventListener("submit", function() {
+          event.preventDefault();
+          let email = this.querySelector("input").value;
+          if (!isValidEmail(email)) {
+            this.querySelector(".error-con").style.display = "block";
+          }
+          else {
+            this.querySelector(".error-con").style.display = "none";
+            createLead(email);
+            this.querySelector("input").value = "";
+            this.parent.querySelector(".email-form-wrapper").style.display = "block";
+            this.parent.remove();
+          }
         }
       });
     }
