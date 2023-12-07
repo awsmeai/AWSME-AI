@@ -121,11 +121,13 @@ var dynamicAddedCSS = `.awsme-ai-chat .trigger {
         width: fit-content;
         -webkit-border-radius: 5px;
         border-radius: 5px;
-        width: 250px;
+        width: 350px;
+        margin-top: 25px;
       }
       .email-form {
         display: flex;
         align-items: center;
+        align-items: stretch;
       }
       .email-form input[type=email] {
         padding: 10px;
@@ -137,6 +139,8 @@ var dynamicAddedCSS = `.awsme-ai-chat .trigger {
         -webkit-border-radius: 5px 0 0 5px;
         border-radius: 5px 0 0 5px;
         width: 100%;
+        font-size: 16px;
+        flex: 1 1 auto;
       }
       .email-form button {
         padding: 9px 10px 10px;
@@ -145,6 +149,7 @@ var dynamicAddedCSS = `.awsme-ai-chat .trigger {
         -webkit-border-radius: 0 5px 5px 0;
         border-radius: 0 5px 5px 0;
         cursor: pointer;
+        flex: 1 1 auto;
       }
       .email-form button:hover {
         background-color: ${emailSubmitBgHoverCol};
