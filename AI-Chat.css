@@ -191,7 +191,7 @@
   flex-wrap: wrap;
   width: 100%;
 }
-.message {
+.message, .message-content {
   overflow-x: hidden;
   display: flex;
   flex-direction: column;
@@ -288,7 +288,7 @@
 }
 
 .video-action {
-    padding: 15px 0;
+    margin: 15px 0;
 }
 
 /* Email form */
@@ -298,7 +298,6 @@ width: fit-content;
 -webkit-border-radius: 5px;
 border-radius: 5px;
 margin: 25px 0;
-flex-basis: 100%;
 }
 .email-form {
 display: flex;
