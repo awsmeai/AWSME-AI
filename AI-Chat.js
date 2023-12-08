@@ -485,10 +485,10 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
           event.preventDefault();
           let email = this.querySelector("input").value;
           if (!isValidEmail(email)) {
-            this.querySelector(".error-con").style.display = "block";
+            this.parentElement.querySelector(".error-con").style.display = "block";
           }
           else {
-            this.querySelector(".error-con").style.display = "none";
+            this.parentElement.querySelector(".error-con").style.display = "none";
             createLead(email);
             this.querySelector("input").value = "";
             this.parentElement.querySelector(".email-form-wrapper").style.display = "block";
