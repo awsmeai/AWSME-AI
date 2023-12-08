@@ -29,7 +29,8 @@ const askEmail = chatStyle["askEmail"];
 const askEmailTrigger = chatStyle["askEmailTrigger"];
 const emailRequestText = chatStyle["emailRequestText"];
 const emailProvidedText = chatStyle["emailProvidedText"];
-
+  
+  
 // Styling 
 const botImgUrl = chatStyle["aiImage"];
 const visitorImgUrl = chatStyle["visitorImage"];
@@ -79,11 +80,7 @@ var dynamicAddedCSS = `.awsme-ai-chat .trigger {
     .awsme-ai-chat .chat-input {
       background: ${inputBgCol};
     }
-    .awsme-ai-chat .user-input,
-    .awsme-ai-chat .user-input::placeholder,
-    .awsme-ai-chat .user-input::-moz-placeholder,
-    .awsme-ai-chat .user-input::-webkit-input-placeholder,
-    .awsme-ai-chat .user-input::-ms-input-placeholder {
+    .awsme-ai-chat .user-input {
       color: ${inputTextCol}; 
     }
     .awsme-ai-chat .send-icon svg {
@@ -279,7 +276,9 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
                       ${isAI ? "": ""}
                   </div>
                   <div class="message-col">
-                    <p class="message" id=${id}>${text}</p> 
+                    <div class="message-content">
+                      <p class="message" id=${id}>${text}</p>
+                    </div>
                     <div class="review-options">
                       <div class="thumbs-up">${reviewIcons[0]}</div>
                       <div class="neutral">${reviewIcons[1]}</div>
@@ -300,7 +299,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       return row;
     }
 
-    function getIframeFromUrl(url) {
+    function getIframeFromUrl(url, id) {
       let newUrl = '';
       const vimeoRegex = /https:\/\/vimeo\.com\/(\d+)/;
       const vimeoMatch = url.match(vimeoRegex);
@@ -315,7 +314,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
           newUrl = `https://youtube.com/embed/${youtubeId}`;
       }
       if (newUrl != "") {
-        let iframe = `<iframe src="${newUrl}" class="video-action" width="480" height="270"></iframe>`;
+        let iframe = `<iframe src="${newUrl}" class="video-action" width="360" height="202.5"></iframe>`;
         return iframe;
       }
       return "";
@@ -332,12 +331,12 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
 
         let ctaHTML = "";
         if (action_type == "link") {
-          ctaHTML = `<a class="${className} cta-callout" href="${action_url}" target="_blank"onclick="updateMetric('', 'actions', sub_doc_ref='${action_id}', 'clicks')">
+          ctaHTML = `<a class="${className} cta-callout" href="${action_url}" target="_blank" onclick="updateMetric('', 'actions', sub_doc_ref='${action_id}', 'clicks')">
             <span class="cta-callout-label">${action_cta}</span>
             </a>`
         }
         else if (action_type == "video") {
-          ctaHTML = getIframeFromUrl(action_url);
+          ctaHTML = getIframeFromUrl(action_url, action_id);
         }
         if (chatHTML != "") {
           stringList.push(ctaHTML);
@@ -405,8 +404,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       lead_stage = response.lead_stage;
       localStorage.setItem('lead_stage', lead_stage)
       let message = response.response;
-      message = message.replace("{", "");
-      message = message.replace("}", "");
+      message = message.replace("{", "").replace("}", "").replace(/\[.*?\]/g, '');
       reviewRefs.push("");
       questionsAndAnswers.push({"question": userMessage, "answer": message})
       conversation += `{assistant: ${message}}`;
@@ -699,7 +697,12 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
 awsmeAiChatModule();
 
 // UPDATE METRICS IN FIRESTORE (Must be in global scope)
+let clickedActions = [];
 async function updateMetric(user_metric="", subcollection="", sub_doc_ref="", sub_metric="") {
+  if (clickedActions.includes(sub_doc_ref)){
+    return false;
+  }
+  clickedActions.push(sub_doc_ref);
   let response = await fetch('https://awsme.co/api/metric/', {
     method: 'POST',
     headers: {
