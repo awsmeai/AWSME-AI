@@ -117,63 +117,23 @@ var dynamicAddedCSS = `.awsme-ai-chat .trigger {
     .email-form-wrapper {
        background-color: ${emailBoxBgCol};
         border: 1px solid ${emailBoxBrCol};
-        padding: 8px;
-        width: fit-content;
-        -webkit-border-radius: 5px;
-        border-radius: 5px;
-        width: 350px;
-        margin-top: 25px;
-      }
-      .email-form {
-        display: flex;
-        align-items: center;
-        align-items: stretch;
       }
       .email-form input[type=email] {
-        padding: 10px;
-        margin-right: 0px;
         border: 1px solid ${emailInputBrCol};
         background: ${emailInputBgCol};
         color: ${emailInputTextCol};
-        border-right: none;
-        -webkit-border-radius: 5px 0 0 5px;
-        border-radius: 5px 0 0 5px;
-        width: 100%;
-        font-size: 16px;
-        flex: 1 1 auto;
       }
       .email-form button {
-        padding: 9px 10px 10px;
         background-color: ${emailSubmitBgCol};
-        border: none;
-        -webkit-border-radius: 0 5px 5px 0;
-        border-radius: 0 5px 5px 0;
-        cursor: pointer;
-        flex: 1 1 auto;
       }
       .email-form button:hover {
         background-color: ${emailSubmitBgHoverCol};
       }
       .email-form button svg {
         fill: ${emailSubmitIconCol}; 
-        display: flex;
       }
       .email-form button:hover svg {
         fill: ${emailSubmitIconHoverCol}; 
-      }
-      .email-form-wrapper p {
-        margin: 0;
-        text-align: center;
-        font-family: arial, san-serif;
-      }
-      .error-con {
-        width: 100%; 
-        margin-top: 5px;
-      }
-      .error-con p {
-        font-size: 12px;
-        color: #E8404A;
-        text-align: left;
       }`;
 
 newStyleTag.textContent = dynamicAddedCSS;
