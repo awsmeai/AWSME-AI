@@ -83,7 +83,8 @@
 }
 .close-x svg {
   cursor: pointer !important;
-  width: 20px;
+  width: 30px;
+  height: 30px;
   right: 15px;
 }
 .sidebar-title {
@@ -141,7 +142,8 @@
   margin-left: 10px;
 }
 .send-icon svg {
- width: 20px;
+ width: 24px;
+ height: 24px;
 }
 .input-note {
   width: 100%;
