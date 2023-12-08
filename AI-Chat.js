@@ -227,7 +227,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
           </p>
       </div>
     </div>
-    <div class="email-form-wrapper" style="display: none;">
+    <div class="email-form-wrapper successful-submit" style="display: none;">
       <p>
         ${emailProvidedText}
       </p>
@@ -464,7 +464,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       })
       response = await response.text();
       response = JSON.parse(response)
-      lead_ref = response.lead_ref;
+      let lead_ref = response.lead_ref;
       if (lead_ref.length > 0) {
           localStorage.setItem('lead_ref', lead_ref)
       }
@@ -491,7 +491,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
             this.parentElement.querySelector(".error-con").style.display = "none";
             createLead(email);
             this.querySelector("input").value = "";
-            this.parentElement.querySelector(".email-form-wrapper").style.display = "block";
+            this.parentElement.parentElement.querySelector(".successful-submit").style.display = "block";
             this.parentElement.remove();
           }
         })
