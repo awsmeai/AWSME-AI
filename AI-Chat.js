@@ -370,15 +370,21 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
         let action_type = action_data[3]     
         updateMetric("", "actions", action_id, "views")
 
+        let chatHTML = "";
         if (action_type == "link") {
-          let ctaHTML = `<a class="${className} cta-callout" href="${action_url}" target="_blank"onclick="updateMetric('', 'actions', sub_doc_ref='${action_id}', 'clicks')">
+          ctaHTML = `<a class="${className} cta-callout" href="${action_url}" target="_blank"onclick="updateMetric('', 'actions', sub_doc_ref='${action_id}', 'clicks')">
             <span class="cta-callout-label">${action_cta}</span>
             </a>`
         }
         else if (action_type == "video") {
-          let ctaHTML = getIframeFromUrl(action_url);
+          ctaHTML = getIframeFromUrl(action_url);
         }
-        stringList.push(ctaHTML);
+        if (chatHTML != "") {
+          stringList.push(ctaHTML);
+        }
+        else {
+          console.log(action_type);
+        }
       }
 
       let lead_ref = localStorage.getItem('lead_ref') != null ? localStorage.getItem('lead_ref'): "";
