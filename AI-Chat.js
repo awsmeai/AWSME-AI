@@ -30,7 +30,6 @@ const askEmailTrigger = chatStyle["askEmailTrigger"];
 const emailRequestText = chatStyle["emailRequestText"];
 const emailProvidedText = chatStyle["emailProvidedText"];
   
-  
 // Styling 
 const botImgUrl = chatStyle["aiImage"];
 const visitorImgUrl = chatStyle["visitorImage"];
@@ -59,6 +58,7 @@ const emailSubmitIconCol = chatStyle["emailSubmitIconCol"];
 const emailSubmitIconHoverCol = chatStyle["emailSubmitIconHoverCol"];
 // -------------------------
 
+  
 // Applying dynamic style here
 var newStyleTag = document.createElement('style');
 var dynamicAddedCSS = `.awsme-ai-chat .trigger {
@@ -242,16 +242,26 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       let index = 0;
       let interval = setInterval(() => {
           if (index < textList.length) {
-          element.innerHTML += textList[index];
-          if (index % 25 == 0) {
-              messageArea.scrollTop = messageArea.scrollHeight;
-          }
-          index++;
+            let item = textList[index];
+            if (typeof item === 'string') {
+              element.innerHTML += item;
+            }
+            else if (item instanceof HTMLElement) {
+              element.appendChild(item);
+            }
+            
+            if (index % 25 == 0) {
+                messageArea.scrollTop = messageArea.scrollHeight;
+            }
+            index++;
           }
           else {
             setTimeout(function() {
               messageArea.scrollTop = messageArea.scrollHeight;
             }, 200);
+            setTimeout(function() {
+              setVideoClickAction();
+            }, 500);
             clearInterval(interval);
             setFormAction();
           }
@@ -299,22 +309,61 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       return row;
     }
 
+    // Function for connecting video start action
+    let player;
+    function setVideoClickAction() {
+      let videos= document.querySelectorAll(".awsme-ai-chat .chat-area .video-action");
+      let newVideo = videos[videos.length-1];
+      let action_id = newVideo.id;
+      let videoData = newVideo.className.split(" ")
+      let videoId = videoData[1];
+      let videoPlatform = videoData[2]
+      if (videoPlatform == "youtube") {
+        player = new YT.Player(action_id, {
+          height: '200',
+          width: '360',
+          videoId: videoId,
+          events: {
+            'onStateChange': onPlayerStateChange
+          }
+        });
+        function onPlayerStateChange(event) {
+          updateMetric('', 'actions', action_id, 'clicks')
+        }
+      }
+      else if (videoPlatform == "vimeo") {
+        let iframeString = `<iframe id="${action_id}" src="https://player.vimeo.com/video/${videoId}" width="360" height="200" frameborder="0" allowfullscreen></iframe>`;
+        newVideo.innerHTML = iframeString;
+        let iframe = newVideo.querySelector("#" + action_id);
+        player = new Vimeo.Player(iframe);
+        player.on('loaded', function() {
+          player.on('play', function() {
+            updateMetric('', 'actions', action_id, 'clicks');
+          });
+        });
+      }
+    }
+    
     function getIframeFromUrl(url, id) {
       let newUrl = '';
       const vimeoRegex = /https:\/\/vimeo\.com\/(\d+)/;
       const vimeoMatch = url.match(vimeoRegex);
+      let videoId;
+      let platform;
       if (vimeoMatch) {
-          const vimeoId = vimeoMatch[1];
-          newUrl = `https://player.vimeo.com/video/${vimeoId}`;
+        platform = "vimeo";
+        videoId = vimeoMatch[1];
+        newUrl = `https://player.vimeo.com/video/${videoId}`;
       }
       const youtubeRegex = /https:\/\/youtu\.be\/([\w-]+)/;
       const youtubeMatch = url.match(youtubeRegex);
       if (youtubeMatch) {
-          const youtubeId = youtubeMatch[1];
-          newUrl = `https://youtube.com/embed/${youtubeId}`;
+          platform = "youtube";
+          videoId = youtubeMatch[1];
+          newUrl = `https://youtube.com/embed/${videoId}`;
       }
       if (newUrl != "") {
-        let iframe = `<iframe src="${newUrl}" class="video-action" width="360" height="202.5"></iframe>`;
+        let iframe = `<div id=${id} class="video-action ${videoId} ${platform}"></div>`;
         return iframe;
       }
       return "";
@@ -327,11 +376,10 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
         let action_url = action_data[1]
         let action_cta = action_data[2]
         let action_type = action_data[3]     
-        updateMetric("", "actions", action_id, "views")
-
+        updateMetric('', 'actions', action_id, 'views');
         let ctaHTML = "";
         if (action_type == "link") {
-          ctaHTML = `<a class="${className} cta-callout" href="${action_url}" target="_blank" onclick="updateMetric('', 'actions', sub_doc_ref='${action_id}', 'clicks')">
+          ctaHTML = `<a class="${className} cta-callout" href="${action_url}" target="_blank" onclick="updateMetric('', 'actions', '${action_id}', 'clicks')">
             <span class="cta-callout-label">${action_cta}</span>
             </a>`
         }
@@ -443,7 +491,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
     // Set email capture action
     function setFormAction() {
       let forms = document.querySelectorAll(".email-form");
-      if (forms) {
+      if (forms.length > 0) {
         let form = forms[forms.length-1];
         form.addEventListener("submit", function(event) {
           event.preventDefault();
@@ -699,10 +747,10 @@ awsmeAiChatModule();
 // UPDATE METRICS IN FIRESTORE (Must be in global scope)
 let clickedActions = [];
 async function updateMetric(user_metric="", subcollection="", sub_doc_ref="", sub_metric="") {
-  if (clickedActions.includes(sub_doc_ref)){
+  if (clickedActions.includes([sub_doc_ref, sub_metric])){
     return false;
   }
-  clickedActions.push(sub_doc_ref);
+  clickedActions.push([sub_doc_ref, sub_metric]);
   let response = await fetch('https://awsme.co/api/metric/', {
     method: 'POST',
     headers: {
@@ -720,3 +768,4 @@ async function updateMetric(user_metric="", subcollection="", sub_doc_ref="", su
   let message = JSON.parse(response).response;
   console.log(message);
 }
+  
