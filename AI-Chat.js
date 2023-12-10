@@ -111,6 +111,24 @@ var dynamicAddedCSS = `.awsme-ai-chat .trigger {
       color: ${linkHoverCol};
     }
 
+    .chat-area::-webkit-scrollbar {
+      width: 10px; 
+      background: ${chatBgCol}; 
+    }
+
+    .chat-area::-webkit-scrollbar-thumb {
+      background: ${inputBgCol};  
+      border-radius: 5px;
+    }
+
+    .chat-area::-webkit-scrollbar-thumb:hover {
+      background: ${chatTextCol}; 
+    }
+
+    .chat-area::-webkit-scrollbar-corner {
+      background: ${chatTextCol}; 
+    }
+
     .email-form-wrapper {
        background-color: ${emailBoxBgCol};
         border: 1px solid ${emailBoxBrCol};
