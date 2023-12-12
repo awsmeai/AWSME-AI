@@ -470,7 +470,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       lead_stage = response.lead_stage;
       localStorage.setItem('lead_stage', lead_stage)
       let message = response.response;
-      message = message.replace("{", "").replace("}", "").replace(/\[.*?\]/g, '');
+      message = message.replace("{", "").replace("}", "").replace(/\[.*?\]/g, '').replace(/\(.*?\)/g, '');
       reviewRefs.push("");
       questionsAndAnswers.push({"question": userMessage, "answer": message})
       conversation += `{assistant: ${message}}`;
