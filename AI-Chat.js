@@ -279,6 +279,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
             }, 200);
             setTimeout(function() {
               setVideoClickAction();
+              setLinkClickaction();
             }, 500);
             clearInterval(interval);
             setFormAction();
@@ -327,10 +328,24 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       return row;
     }
 
+    // Function for setting link click action
+    function setLinkClickAction() {
+      let links = document.querySelectorAll(".awsme-ai-chat .chat-area .link-action");
+      if (links.length == 0) {
+        return false;
+      }
+      let newLink = links[links.length-1];
+      let action_id = newLink.id;
+      newLink.onclick = function() { updateMetric('', 'actions', action_id, 'clicks') };
+    }
+
     // Function for connecting video start action
     let player;
     function setVideoClickAction() {
       let videos= document.querySelectorAll(".awsme-ai-chat .chat-area .video-action");
+      if (videos.length == 0) {
+        return false;
+      }
       let newVideo = videos[videos.length-1];
       let action_id = newVideo.id;
       let videoData = newVideo.className.split(" ")
@@ -376,9 +391,9 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
       const youtubeRegex = /https:\/\/youtu\.be\/([\w-]+)/;
       const youtubeMatch = url.match(youtubeRegex);
       if (youtubeMatch) {
-          platform = "youtube";
-          videoId = youtubeMatch[1];
-          newUrl = `https://youtube.com/embed/${videoId}`;
+        platform = "youtube";
+        videoId = youtubeMatch[1];
+        newUrl = `https://youtube.com/embed/${videoId}`;
       }
       if (newUrl != "") {
         let iframe = `<div id=${id} class="video-action ${videoId} ${platform}"></div>`;
@@ -397,7 +412,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
         updateMetric('', 'actions', action_id, 'views');
         let ctaHTML = "";
         if (action_type == "link") {
-          ctaHTML = `<a class="${className} cta-callout" href="${action_url}" target="_blank" onclick="updateMetric('', 'actions', '${action_id}', 'clicks')">
+          ctaHTML = `<a class="${className} link-action cta-callout" id="${action_id}" href="${action_url}" target="_blank">
             <span class="cta-callout-label">${action_cta}</span>
             </a>`
         }
