@@ -780,10 +780,11 @@ awsmeAiChatModule();
 // UPDATE METRICS IN FIRESTORE (Must be in global scope)
 let clickedActions = [];
 async function updateMetric(user_metric="", subcollection="", sub_doc_ref="", sub_metric="") {
-  if (clickedActions.includes([sub_doc_ref, sub_metric])){
+  const actionKey = sub_doc_ref + "_" + sub_metric;
+  if (clickedActions.includes(actionKey)){
     return false;
   }
-  clickedActions.push([sub_doc_ref, sub_metric]);
+  clickedActions.push(actionKey);
   let response = await fetch('https://awsme.co/api/metric/', {
     method: 'POST',
     headers: {
