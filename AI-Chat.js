@@ -279,7 +279,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000; positi
             }, 200);
             setTimeout(function() {
               setVideoClickAction();
-              setLinkClickaction();
+              setLinkClickAction();
             }, 500);
             clearInterval(interval);
             setFormAction();
