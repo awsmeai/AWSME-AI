@@ -466,6 +466,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       else {
           new_session = false;
       }
+      let crm_ids = localStorage.getItem('crm_ids') != null ? localStorage.getItem('crm_ids'): {};
       let response = await fetch('https://awsme.co/api/call/', {
           method: 'POST',
           headers: {
@@ -476,7 +477,8 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
               user_id: awsmeId,
               lead_stage: lead_stage,
               lead_ref: lead_ref,
-              new_session: new_session
+              new_session: new_session,
+              crm_ids: crm_ids
           }),
       })
       response = await response.text();
@@ -512,6 +514,10 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       let lead_ref = response.lead_ref;
       if (lead_ref.length > 0) {
           localStorage.setItem('lead_ref', lead_ref)
+      }
+      let crm_ids = response.crm_ids;
+      if (Object.keys(crm_ids).length > 0) {
+        localStorage.setItem('crm_ids', crm_ids)
       }
       console.log(response.response)
     }
