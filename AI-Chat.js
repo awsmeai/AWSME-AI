@@ -468,7 +468,8 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       }
       let crm_ids = localStorage.getItem('crm_ids') != null ? JSON.parse(localStorage.getItem('crm_ids')): {};
       
-      let message = "I'm currently recharging my circuits but I'll be up and running shortly. Thanks for your patience!"
+      let message = "I'm currently recharging my circuits but I'll be up and running shortly. Thanks for your patience!";
+      let action_data = ["", "", ""];
       try {
         let response = await fetch('https://awsme.co/api/call/', {
             method: 'POST',
@@ -487,7 +488,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         if (response.ok) {
           response = await response.text();
           response = JSON.parse(response);
-          let action_data = response.action_data;
+          action_data = response.action_data;
           lead_stage = response.lead_stage;
           localStorage.setItem('lead_stage', lead_stage)
           message = response.response;
