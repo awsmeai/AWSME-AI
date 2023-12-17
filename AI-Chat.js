@@ -535,7 +535,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         }
       }
       catch {
-        console.log("Some property were missing in the create lead response.)
+        console.log("Some property were missing in the create lead response.")
       }
       console.log(response.response)
     }
