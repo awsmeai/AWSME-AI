@@ -533,6 +533,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         if (Object.keys(crm_ids).length > 0) {
           localStorage.setItem('crm_ids', JSON.stringify(crm_ids))
         }
+      }
       catch {
         console.log("Some property were missing in the create lead response.)
       }
