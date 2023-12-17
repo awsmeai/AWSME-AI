@@ -466,35 +466,48 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       else {
           new_session = false;
       }
-      let crm_ids = localStorage.getItem('crm_ids') != null ? localStorage.getItem('crm_ids'): {};
-      let response = await fetch('https://awsme.co/api/call/', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-              messages: conversation,
-              user_id: awsmeId,
-              lead_stage: lead_stage,
-              lead_ref: lead_ref,
-              new_session: new_session,
-              crm_ids: crm_ids
-          }),
-      })
-      response = await response.text();
-      response = JSON.parse(response);
-      let action_data = response.action_data;
-      lead_stage = response.lead_stage;
-      localStorage.setItem('lead_stage', lead_stage)
-      let message = response.response;
-      message = message.replace("{", "").replace("}", "").replace(/\[.*?\]/g, '').replace(/\(.*?\)/g, '');
+      let crm_ids = localStorage.getItem('crm_ids') != null ? JSON.parse(localStorage.getItem('crm_ids')): {};
+      
+      message = "I'm currently recharging my circuits but I'll be up and running shortly. Thanks for your patience!"
+      try {
+        let response = await fetch('https://awsme.co/api/call/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                messages: conversation,
+                user_id: awsmeId,
+                lead_stage: lead_stage,
+                lead_ref: lead_ref,
+                new_session: new_session,
+                crm_ids: crm_ids
+            }),
+        })
+        if (response.ok) {
+          response = await response.text();
+          response = JSON.parse(response);
+          let action_data = response.action_data;
+          lead_stage = response.lead_stage;
+          localStorage.setItem('lead_stage', lead_stage)
+          let message = response.response;
+          message = message.replace("{", "").replace("}", "").replace(/\[.*?\]/g, '').replace(/\(.*?\)/g, '');
+        }
+        else {
+          console.log("Failed request to AI");
+          console.log(response.response);
+        }
+      }
+      catch {
+        console.log("Failed request to AI");
+        console.log(response.response);
+      }
       reviewRefs.push("");
       questionsAndAnswers.push({"question": userMessage, "answer": message})
       conversation += `{assistant: ${message}}`;
       
       return [message, action_data];
     }
-
 
     // Create new lead in database
     async function createLead(email) {
@@ -511,13 +524,17 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       })
       response = await response.text();
       response = JSON.parse(response)
-      let lead_ref = response.lead_ref;
-      if (lead_ref.length > 0) {
-          localStorage.setItem('lead_ref', lead_ref)
-      }
-      let crm_ids = response.crm_ids;
-      if (Object.keys(crm_ids).length > 0) {
-        localStorage.setItem('crm_ids', crm_ids)
+      try {
+        let lead_ref = response.lead_ref;
+        if (lead_ref.length > 0) {
+            localStorage.setItem('lead_ref', lead_ref)
+        }
+        let crm_ids = response.crm_ids;
+        if (Object.keys(crm_ids).length > 0) {
+          localStorage.setItem('crm_ids', JSON.stringify(crm_ids))
+        }
+      catch {
+        console.log("Some property were missing in the create lead response.)
       }
       console.log(response.response)
     }
@@ -808,4 +825,3 @@ async function updateMetric(user_metric="", subcollection="", sub_doc_ref="", su
   let message = JSON.parse(response).response;
   console.log(message);
 }
-  
