@@ -125,7 +125,7 @@
   margin-bottom: 10px;
 }
 .user-input {
-  border: none;
+  border: none !important;
   padding: 0px;
   background: transparent;
   max-height: 200px;
@@ -134,6 +134,7 @@
   overflow-y: hidden; 
   width: 100%;
   font-size: 18px;
+  box-shadow: none !important;
 }
 
 
