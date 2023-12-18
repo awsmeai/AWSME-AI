@@ -16,6 +16,8 @@ const embedRef = doc(user, "embedScript", embedId);
 const embedDoc = await getDoc(embedRef);
 const chatStyle = embedDoc.data();
 
+// Variable for updateMetric function
+let clickedActions = [];
 
 function awsmeAiChatModule() {
 // ------ Passed variables --------
@@ -299,7 +301,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
     function responseRowGen(isAI, text, id, showReview) {
       let row;
       if (showReview) {
-        const row_index = $(".review-row").length;
+        const row_index = document.querySelectorAll(".review-row").length;
         row = `<div class="chat-row-wrapper ${row_index} ${isAI ? "bot": "user"} ${showReview ? "review-row": ""}">
                   <div class="profile">
                       ${isAI ? "": ""}
@@ -791,10 +793,11 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
     updateMetric("numTriggerViews");
   }, 200)
 
-  $(document).ready(function(){
-    $('textarea.user-input').on('input', function() {
-      this.style.height = 'auto';
-      this.style.height = (this.scrollHeight) + 'px';
+  document.addEventListener('DOMContentLoaded', function() {
+    var textarea = document.querySelector('textarea.user-input');
+    textarea.addEventListener('input', function() {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
     });
   });
 
@@ -803,7 +806,6 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
 awsmeAiChatModule();
 
 // UPDATE METRICS IN FIRESTORE (Must be in global scope)
-let clickedActions = [];
 async function updateMetric(user_metric="", subcollection="", sub_doc_ref="", sub_metric="") {
   const actionKey = sub_doc_ref + "_" + sub_metric;
   if (clickedActions.includes(actionKey)){
