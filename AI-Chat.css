@@ -304,6 +304,7 @@ min-width: 100%;
 display: flex;
 align-items: center;
 align-items: stretch;
+margin-bottom: 0 !important;
 }
 .email-form input[type=email] {
 padding: 10px;
@@ -312,8 +313,10 @@ border-right: none;
 -webkit-border-radius: 5px 0 0 5px;
 border-radius: 5px 0 0 5px;
 width: 100%;
+height: auto !important;
 font-size: 16px;
 flex: 1 1 auto;
+margin-bottom: 0;
 }
 .email-form button {
 padding: 10px;
