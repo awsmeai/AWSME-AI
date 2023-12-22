@@ -784,6 +784,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           updateMetric("numEngagements");
       }
       updateMetric("numResponses");
+      updateAIPage(window.location.protocol + "//" + window.location.hostname + window.location.pathname);
   }
 
     // First prompt from AI
@@ -806,14 +807,34 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
 }
 
 awsmeAiChatModule();
+  
+  
+// UPDATE PAGE RESPONSES FIRESTORE (Must be in global scope)
+async function updateAIPage(url) {
+  let response = await fetch('https://awsme.co/api/ai-page/', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      user_id: awsmeId,
+      url: url
+    }),
+  })
+  response = await response.text();
+  let message = JSON.parse(response).response;
+  console.log(message);
+}
 
 // UPDATE METRICS IN FIRESTORE (Must be in global scope)
 async function updateMetric(user_metric="", subcollection="", sub_doc_ref="", sub_metric="") {
-  const actionKey = sub_doc_ref + "_" + sub_metric;
-  if (clickedActions.includes(actionKey)){
-    return false;
+  if (sub_doc_ref != "") {
+    const actionKey = sub_doc_ref + "_" + sub_metric;
+    if (clickedActions.includes(actionKey)){
+      return false;
+    }
+    clickedActions.push(actionKey);
   }
-  clickedActions.push(actionKey);
   let response = await fetch('https://awsme.co/api/metric/', {
     method: 'POST',
     headers: {
