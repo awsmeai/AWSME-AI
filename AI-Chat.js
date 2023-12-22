@@ -406,7 +406,9 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
     
     function responseHTMLModifier(string, className, action_data) {
       let action_id = action_data[0]
-      let stringList = string.split("");
+      let newString = string.replace(/<br>/g, "§");
+      let stringList = newString.split("");
+      stringList = stringList.map(item => item.replace(/§/g, "<br>"))
       if (action_id.length == 20) {
         let action_url = action_data[1]
         let action_cta = action_data[2]
@@ -494,7 +496,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           lead_stage = response.lead_stage;
           localStorage.setItem('lead_stage', lead_stage)
           message = response.response;
-          message = message.replace("{", "").replace("}", "").replace(/\[.*?\]/g, '').replace(/\(.*?\)/g, '');
+          message = message.replace("{", "").replace("}", "").replace(/\[.*?\]/g, '').replace(/\(.*?\)/g, '').replace(/\n/g, '<br>');
         }
         else {
           console.log("Failed request to AI");
