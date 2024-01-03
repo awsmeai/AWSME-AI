@@ -215,7 +215,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
   tempDiv.innerHTML = chatHTML;
   document.body.appendChild(tempDiv.firstElementChild);
   
-  const chatWidth = 580;
+  const chatWidth = screen.width > 580 ? 580:screen.width;
   const triggerButton = document.querySelector('.trigger');
   const sendButton = document.querySelector('.send-icon');
   const closeButton = document.querySelector('.close-x');
