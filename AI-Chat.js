@@ -404,6 +404,17 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       return "";
     }
     
+     
+    function getGifHTML(url) {
+      if (url.slice(0, 1) == "<") {
+        return url;
+      }
+      else {
+        let iframe = `<iframe src="${url}" width="360" height="360" frameBorder="0" class="chat-gif"></iframe>`;
+        return iframe;
+      }
+    }
+    
     function responseHTMLModifier(string, className, action_data) {
       let action_id = action_data[0]
       let newString = string.replace(/<br>/g, "§");
@@ -422,6 +433,9 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         }
         else if (action_type == "video") {
           ctaHTML = getIframeFromUrl(action_url, action_id);
+        }
+        else if (action_type == "gif") {
+          ctaHTML = getGifHTML(action_url);
         }
         if (chatHTML != "") {
           stringList.push(ctaHTML);
@@ -448,8 +462,8 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       }
       
       return stringList;
-    }
-
+    }   
+ 
     let conversation = "";
     let reviewRefs = [];
     let questionsAndAnswers = [];
