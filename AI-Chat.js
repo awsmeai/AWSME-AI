@@ -174,7 +174,7 @@ document.head.appendChild(newStyleTag);
 
  
 const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; position: relative;">
-  <div class="trigger" style="bottom: 15%;">
+  <div class="trigger">
       <span class="wave">👋</span> 
     <p style="margin-bottom: 0px;">
       ${triggerLabel}
