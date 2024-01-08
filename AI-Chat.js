@@ -31,6 +31,21 @@ const askEmail = chatStyle["askEmail"];
 const askEmailTrigger = chatStyle["askEmailTrigger"];
 const emailRequestText = chatStyle["emailRequestText"];
 const emailProvidedText = chatStyle["emailProvidedText"];
+
+let triggerPos = "bottom";
+if ("triggerPos" in chatStyle) {
+  triggerPos = chatStyle["triggerPos"].toLowerCase();
+}
+let triggerPosCSS;
+if (triggerPos == "top") {
+  triggerPosCSS = "top: 15%;";
+}
+else if (triggerPos == "middle") {
+  triggerPosCSS = "top: 50%;";
+}
+else {
+  triggerPosCSS = "bottom: 15%;";
+}
   
 // Styling 
 const botImgUrl = chatStyle["aiImage"];
@@ -65,6 +80,7 @@ const emailSubmitIconHoverCol = chatStyle["emailSubmitIconHoverCol"];
 var newStyleTag = document.createElement('style');
 var dynamicAddedCSS = `.awsme-ai-chat .trigger {
       background-color: ${triggerBgCol};
+      ${triggerPosCSS}
     }      
     .awsme-ai-chat .trigger p {
       color: ${triggerTextCol};
