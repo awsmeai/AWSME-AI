@@ -421,14 +421,10 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
     }
     
      
-    function getGifHTML(url) {
-      if (url.slice(0, 1) == "<") {
-        return url;
-      }
-      else {
-        let iframe = `<iframe src="${url}" width="360" height="360" frameBorder="0" class="chat-gif"></iframe>`;
+    function getGifHTML(url, ratio) {
+        let gifHeight = 360 * ratio;
+        let iframe = `<iframe src="${url}" width="360" height="${gifHeight}" frameBorder="0" class="chat-gif"></iframe>`;
         return iframe;
-      }
     }
     
     function responseHTMLModifier(string, className, action_data) {
@@ -439,7 +435,8 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       if (action_id.length == 20) {
         let action_url = action_data[1]
         let action_cta = action_data[2]
-        let action_type = action_data[3]     
+        let action_type = action_data[3]
+        let action_ratio = action_data[4]
         updateMetric('', 'actions', action_id, 'views');
         let ctaHTML = "";
         if (action_type == "link") {
@@ -451,7 +448,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           ctaHTML = getIframeFromUrl(action_url, action_id);
         }
         else if (action_type == "gif") {
-          ctaHTML = getGifHTML(action_url);
+          ctaHTML = getGifHTML(action_url, action_ratio);
         }
         if (chatHTML != "") {
           stringList.push(ctaHTML);
@@ -503,7 +500,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       let crm_ids = localStorage.getItem('crm_ids') != null ? JSON.parse(localStorage.getItem('crm_ids')): {};
       
       let message = "I'm currently recharging my circuits but I'll be up and running shortly. Thanks for your patience!";
-      let action_data = ["", "", ""];
+      let action_data = ["", "", "", "", 0];
       try {
         let response = await fetch('https://awsme.co/api/call/', {
             method: 'POST',
