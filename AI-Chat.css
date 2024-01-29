@@ -13,6 +13,10 @@
     animation-iteration-count: 1;
 }
 
+.awsme-ai-chat {
+    display: none;
+}
+
 .trigger {
   cursor: pointer !important;
   padding: 15px;
