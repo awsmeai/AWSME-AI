@@ -11,8 +11,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const user = doc(collection(db, "users"), awsmeId);
-const embedRef = doc(user, "embedScript", embedId);
+const team = doc(collection(db, "team"), awsmeId);
+const embedRef = doc(team, "embed", embedId);
 const embedDoc = await getDoc(embedRef);
 const chatStyle = embedDoc.data();
 
@@ -354,7 +354,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       }
       let newLink = links[links.length-1];
       let action_id = newLink.id;
-      newLink.onclick = function() { updateMetric('', 'actions', action_id, 'clicks') };
+      newLink.onclick = function() { updateMetric('', 'action', action_id, 'clicks') };
     }
 
     // Function for connecting video start action
@@ -437,7 +437,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         let action_cta = action_data[2]
         let action_type = action_data[3]
         let action_ratio = action_data[4]
-        updateMetric('', 'actions', action_id, 'views');
+        updateMetric('', 'action', action_id, 'views');
         let ctaHTML = "";
         if (action_type == "link") {
           ctaHTML = `<a class="${className} link-action cta-callout" id="${action_id}" href="${action_url}" target="_blank">
@@ -854,7 +854,7 @@ async function updateAIPage(url) {
 }
 
 // UPDATE METRICS IN FIRESTORE (Must be in global scope)
-async function updateMetric(user_metric="", subcollection="", sub_doc_ref="", sub_metric="") {
+async function updateMetric(team_metric="", subcollection="", sub_doc_ref="", sub_metric="") {
   if (sub_doc_ref != "") {
     const actionKey = sub_doc_ref + "_" + sub_metric;
     if (clickedActions.includes(actionKey)){
@@ -869,7 +869,7 @@ async function updateMetric(user_metric="", subcollection="", sub_doc_ref="", su
     },
     body: JSON.stringify({
       user_id: awsmeId,
-      user_metric: user_metric,
+      team_metric: team_metric,
       subcollection: subcollection,
       sub_doc_ref: sub_doc_ref,
       sub_metric: sub_metric
