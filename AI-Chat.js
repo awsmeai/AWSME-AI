@@ -253,9 +253,15 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         updateMetric("numTriggerClicks");
         firstClick = false;
       }
+      if (window.innerWidth < 575) {
+        document.body.style.overflow = 'hidden';
+      }
     });
     closeButton.addEventListener('click', () => {
       sidebar.style.right = '-' + chatWidth + 'px';
+      if (window.innerWidth < 575) {
+        document.body.style.overflow = 'scroll';
+      }
     });
 
 
@@ -301,6 +307,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
             }, 500);
             clearInterval(interval);
             setFormAction();
+            element.parentElement.parentElement.querySelector(".awsme-review-options").style.opacity = 1;
           }
       }, 20)
       waiting = false
@@ -326,7 +333,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
                     <div class="awsme-message-content">
                       <p class="awsme-message" id=${id}>${text}</p>
                     </div>
-                    <div class="awsme-review-options">
+                    <div class="awsme-review-options" style="opacity:0;">
                       <div class="awsme-thumbs-up">${reviewIcons[0]}</div>
                       <div class="awsme-neutral">${reviewIcons[1]}</div>
                       <div class="awsme-thumbs-down">${reviewIcons[2]}</div>
