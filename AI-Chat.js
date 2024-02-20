@@ -534,7 +534,9 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           lead_stage = response.lead_stage;
           localStorage.setItem('lead_stage', lead_stage)
           message = response.response;
-          message = message.replace("{", "").replace("}", "").replace(/\[.*?\]/g, '').replace(/\(.*?\)/g, '').replace(/\n/g, '<br>').replace(/\<br><br>!<br><br>/g, '');
+          message = message.replace(/{|}|\[.*?\]|\(.*?\)/g, '')
+                     .replace(/\n/g, '<br>')
+                     .replace(/(<br>){3,}/g, ' ').replace(/\<br><br>!<br><br>/g, '');
         }
         else {
           console.log("Failed request to AI");
