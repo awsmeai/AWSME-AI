@@ -248,13 +248,15 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
     let firstClick = true;
     triggerButton.addEventListener('click', () => {
       sidebar.style.right = '0';
-      document.querySelector(".awsme-user-input").focus();
       if (firstClick) {
         updateMetric("numTriggerClicks");
         firstClick = false;
       }
       if (window.innerWidth < 575) {
         document.body.style.overflow = 'hidden';
+      }
+      else {
+        document.querySelector(".awsme-user-input").focus();
       }
     });
     closeButton.addEventListener('click', () => {
@@ -307,7 +309,9 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
             }, 500);
             clearInterval(interval);
             setFormAction();
-            element.parentElement.parentElement.querySelector(".awsme-review-options").style.opacity = 1;
+            if (element.parentElement.parentElement.querySelector(".awsme-review-options")) {
+              element.parentElement.parentElement.querySelector(".awsme-review-options").style.opacity = 1;
+            }
           }
       }, 20)
       waiting = false
@@ -530,7 +534,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           lead_stage = response.lead_stage;
           localStorage.setItem('lead_stage', lead_stage)
           message = response.response;
-          message = message.replace("{", "").replace("}", "").replace(/\[.*?\]/g, '').replace(/\(.*?\)/g, '').replace(/\n/g, '<br>');
+          message = message.replace("{", "").replace("}", "").replace(/\[.*?\]/g, '').replace(/\(.*?\)/g, '').replace(/\n/g, '<br>').replace(/\<br><br>!<br><br>/g, '');
         }
         else {
           console.log("Failed request to AI");
