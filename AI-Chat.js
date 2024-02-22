@@ -1,3 +1,4 @@
+ 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
@@ -22,20 +23,22 @@ let clickedActions = [];
 function awsmeAiChatModule() {
 // ------ Passed variables --------
 // Settings
-const AIFirstGreeting = chatStyle["greetingText"];
-const triggerLabel = chatStyle["triggerText"];
-const headline = chatStyle["headline"];
-const paragraph = chatStyle["paragraph"];
-const chatPlaceholder = chatStyle["chatInputText"];
-const askEmail = chatStyle["askEmail"];
-const askEmailTrigger = chatStyle["askEmailTrigger"];
-const emailRequestText = chatStyle["emailRequestText"];
-const emailProvidedText = chatStyle["emailProvidedText"];
-
-let triggerPos = "bottom";
-if ("triggerPos" in chatStyle) {
-  triggerPos = chatStyle["triggerPos"].toLowerCase();
+const AIFirstGreeting = "greetingText" in chatStyle ? chatStyle["greetingText"]: "";
+const triggerLabel = "triggerText" in chatStyle ? chatStyle["triggerText"]: "";
+const headline = "headline" in chatStyle ? chatStyle["headline"]: "";
+const paragraph = "paragraph" in chatStyle ? chatStyle["paragraph"]: "";
+const chatPlaceholder = "chatInputText" in chatStyle ? chatStyle["chatInputText"]:"";
+const askEmail = "askEmail" in chatStyle ? chatStyle["askEmail"]:false;
+const askEmailTrigger = "askEmailTrigger" in chatStyle ? chatStyle["askEmailTrigger"]:"";
+const emailRequestText = "emailRequestText" in chatStyle ? chatStyle["emailRequestText"]:"";
+const emailProvidedText = "emailProvidedText" in chatStyle ? chatStyle["emailProvidedText"]:"";
+  
+let activeAI = "active" in chatStyle ? chatStyle["active"]: true;
+if (!activeAI) {
+  return null;
 }
+
+const triggerPos = "triggerPos" in chatStyle ? chatStyle["triggerPos"]:"bottom";
 let triggerPosCSS;
 if (triggerPos == "top") {
   triggerPosCSS = "top: 15%;";
@@ -48,31 +51,32 @@ else {
 }
   
 // Styling 
-const botImgUrl = chatStyle["aiImage"];
-const visitorImgUrl = chatStyle["visitorImage"];
-const triggerBgCol = chatStyle["triggerBgCol"];
-const triggerTextCol = chatStyle["triggerTextCol"];
-const headBgCol = chatStyle["headerBgCol"];
-const headTextCol = chatStyle["headerTextCol"];
-const chatBgCol = chatStyle["windowBgCol"];
-const chatTextCol = chatStyle["windowTextCol"];
-const inputBgCol = chatStyle["chatBgCol"];
-const inputTextCol = chatStyle["chatTextCol"]; 
-const closeNormalCol = chatStyle["closeNormalCol"];
-const closeHoverCol = chatStyle["closeHoverCol"];
-const scoreIconNormalCol = chatStyle["scoreIconNormalCol"];
-const scoreIconActiveCol = chatStyle["scoreIconActiveCol"];
-const linkNormalCol = chatStyle["linkNormalCol"];
-const linkHoverCol = chatStyle["linkHoverCol"];
-const emailBoxBgCol = chatStyle["emailBoxBgCol"];
-const emailBoxBrCol = chatStyle["emailBoxBrCol"];
-const emailInputBgCol = chatStyle["emailInputBgCol"];
-const emailInputBrCol = chatStyle["emailInputBrCol"];
-const emailInputTextCol = chatStyle["emailInputTextCol"];
-const emailSubmitBgCol = chatStyle["emailSubmitBgCol"];
-const emailSubmitBgHoverCol = chatStyle["emailSubmitBgHoverCol"];
-const emailSubmitIconCol = chatStyle["emailSubmitIconCol"];
-const emailSubmitIconHoverCol = chatStyle["emailSubmitIconHoverCol"];
+const botImgUrl = "aiImage" in chatStyle ? chatStyle["aiImage"]:"https://firebasestorage.googleapis.com/v0/b/awsmeai.appspot.com/o/general%2Fimages%2Fawsme-avatar%202.png?alt=media&token=c8786620-864e-479a-89af-895fa9b8361f";
+const visitorImgUrl = "visitorImage" in chatStyle ? chatStyle["visitorImage"]:"https://firebasestorage.googleapis.com/v0/b/awsmeai.appspot.com/o/general%2Fimages%2Favatar-default%201.png?alt=media&token=0769a30e-471a-4616-934c-1a80cbe43054";
+const triggerBgCol = "triggerBgCol" in chatStyle ? chatStyle["triggerBgCol"]:"#BE0BB3";
+const triggerTextCol = "triggerTextCol" in chatStyle ? chatStyle["triggerTextCol"] : "#f9f9f9";
+const headBgCol = "headerBgCol" in chatStyle ? chatStyle["headerBgCol"] : "#171621";
+const headTextCol = "headerTextCol" in chatStyle ? chatStyle["headerTextCol"] : "#f9f9f9";
+const chatBgCol = "windowBgCol" in chatStyle ? chatStyle["windowBgCol"] : "#f9f9f9";
+const chatTextCol = "windowTextCol" in chatStyle ? chatStyle["windowTextCol"] : "#171621";
+const inputBgCol = "chatBgCol" in chatStyle ? chatStyle["chatBgCol"] : "#dddddd";
+const inputTextCol = "chatTextCol" in chatStyle ? chatStyle["chatTextCol"] : "#1c1c1c";
+const closeNormalCol = "closeNormalCol" in chatStyle ? chatStyle["closeNormalCol"] : "#f9f9f9";
+const closeHoverCol = "closeHoverCol" in chatStyle ? chatStyle["closeHoverCol"] : "#BE0BB3";
+const scoreIconNormalCol = "scoreIconNormalCol" in chatStyle ? chatStyle["scoreIconNormalCol"] : "#BE0BB3";
+const scoreIconActiveCol = "scoreIconActiveCol" in chatStyle ? chatStyle["scoreIconActiveCol"] : "#1c1c1c";
+const linkNormalCol = "linkNormalCol" in chatStyle ? chatStyle["linkNormalCol"] : "#BE0BB3";
+const linkHoverCol = "linkHoverCol" in chatStyle ? chatStyle["linkHoverCol"] : "#171621";
+const emailBoxBgCol = "emailBoxBgCol" in chatStyle ? chatStyle["emailBoxBgCol"] : "#f9f9f9";
+const emailBoxBrCol = "emailBoxBrCol" in chatStyle ? chatStyle["emailBoxBrCol"] : "#dddddd";
+const emailInputBgCol = "emailInputBgCol" in chatStyle ? chatStyle["emailInputBgCol"] : "#ffffff";
+const emailInputBrCol = "emailInputBrCol" in chatStyle ? chatStyle["emailInputBrCol"] : "#dddddd";
+const emailInputTextCol = "emailInputTextCol" in chatStyle ? chatStyle["emailInputTextCol"] : "#0a090e";
+const emailSubmitBgCol = "emailSubmitBgCol" in chatStyle ? chatStyle["emailSubmitBgCol"] : "#BE0BB3";
+const emailSubmitBgHoverCol = "emailSubmitBgHoverCol" in chatStyle ? chatStyle["emailSubmitBgHoverCol"] : "#823DA5";
+const emailSubmitIconCol = "emailSubmitIconCol" in chatStyle ? chatStyle["emailSubmitIconCol"] : "#ffffff";
+const emailSubmitIconHoverCol = "emailSubmitIconHoverCol" in chatStyle ? chatStyle["emailSubmitIconHoverCol"] : "#ffffff";
+
 // -------------------------
 
   
@@ -244,7 +248,10 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
                             '<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM176.4 176a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm128 32a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM160 336H352c8.8 0 16 7.2 16 16s-7.2 16-16 16H160c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>',
                             '<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path d="M313.4 479.1c26-5.2 42.9-30.5 37.7-56.5l-2.3-11.4c-5.3-26.7-15.1-52.1-28.8-75.2H464c26.5 0 48-21.5 48-48c0-18.5-10.5-34.6-25.9-42.6C497 236.6 504 223.1 504 208c0-23.4-16.8-42.9-38.9-47.1c4.4-7.3 6.9-15.8 6.9-24.9c0-21.3-13.9-39.4-33.1-45.6c.7-3.3 1.1-6.8 1.1-10.4c0-26.5-21.5-48-48-48H294.5c-19 0-37.5 5.6-53.3 16.1L202.7 73.8C176 91.6 160 121.6 160 153.7V192v48 24.9c0 29.2 13.3 56.7 36 75l7.4 5.9c26.5 21.2 44.6 51 51.2 84.2l2.3 11.4c5.2 26 30.5 42.9 56.5 37.7zM32 384H96c17.7 0 32-14.3 32-32V128c0-17.7-14.3-32-32-32H32C14.3 96 0 110.3 0 128V352c0 17.7 14.3 32 32 32z"/></svg>']
 
-  setTimeout(function() {      
+  setTimeout(function() {
+    // Get users stored email for AWSME AI
+    let userEmail = localStorage.getItem('email_'+awsmeId) != null ? localStorage.getItem('email_'+awsmeId): "";
+    
     let firstClick = true;
     triggerButton.addEventListener('click', () => {
       sidebar.style.right = '0';
@@ -469,8 +476,8 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         }
       }
 
-      let lead_ref = localStorage.getItem('lead_ref') != null ? localStorage.getItem('lead_ref'): "";
-      if (lead_ref == "" && askEmail) {
+      let lead_ref = localStorage.getItem('lead_ref_'+awsmeId) != null ? localStorage.getItem('lead_ref_'+awsmeId): "";
+      if (lead_ref == "" && askEmail && userEmail == "") {
         if (askEmailTrigger == "firstMsg" && questionsAndAnswers.length == 1) {
           stringList = [...stringList, "\n", ...emailRequestText.split("")];
           stringList.push(emailFormHTML);
@@ -488,16 +495,22 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       return stringList;
     }   
  
+
+    
     let conversation = "";
+    if (userEmail != "") {
+      conversation += "{system: Greet the user by name in the next response, here is their email as a reference for their name: " + userEmail + "}";
+    }
+        
     let reviewRefs = [];
     let questionsAndAnswers = [];
     async function getAIResponse(userMessage) {
       userMessage = userMessage.replace("{", "");
       userMessage = userMessage.replace("}", "");
-      let lead_stage = localStorage.getItem('lead_stage') != null ? localStorage.getItem('lead_stage'): "";
-      let lead_ref = localStorage.getItem('lead_ref') != null ? localStorage.getItem('lead_ref'): "";
+      let lead_stage = localStorage.getItem('lead_stage_'+awsmeId) != null ? localStorage.getItem('lead_stage_'+awsmeId): "";
+      let lead_ref = localStorage.getItem('lead_ref_'+awsmeId) != null ? localStorage.getItem('lead_ref_'+awsmeId): "";
       let newMessage = `{user: ${userMessage}}`;
-      while (conversation.length + newMessage.length > 3000) {
+      while (conversation.length + newMessage.length > 2000) {
           conversation = conversation.substring(conversation.indexOf('}') + 1).trim();
       }
       conversation += newMessage;
@@ -508,7 +521,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       else {
           new_session = false;
       }
-      let crm_ids = localStorage.getItem('crm_ids') != null ? JSON.parse(localStorage.getItem('crm_ids')): {};
+      let crm_ids = localStorage.getItem('crm_ids_'+awsmeId) != null ? JSON.parse(localStorage.getItem('crm_ids_'+awsmeId)): {};
       
       let message = "I'm currently recharging my circuits but I'll be up and running shortly. Thanks for your patience!";
       let action_data = ["", "", "", "", 0];
@@ -532,7 +545,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           response = JSON.parse(response);
           action_data = response.action_data;
           lead_stage = response.lead_stage;
-          localStorage.setItem('lead_stage', lead_stage)
+          localStorage.setItem('lead_stage_'+awsmeId, lead_stage)
           message = response.response;
           message = message.replace(/{|}|\[.*?\]|\(.*?\)/g, '')
                      .replace(/\n/g, '<br>')
@@ -572,11 +585,11 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       try {
         let lead_ref = response.lead_ref;
         if (lead_ref.length > 0) {
-            localStorage.setItem('lead_ref', lead_ref)
+            localStorage.setItem('lead_ref_'+awsmeId, lead_ref)
         }
         let crm_ids = response.crm_ids;
         if (Object.keys(crm_ids).length > 0) {
-          localStorage.setItem('crm_ids', JSON.stringify(crm_ids))
+          localStorage.setItem('crm_ids_'+awsmeId, JSON.stringify(crm_ids))
         }
       }
       catch {
@@ -603,6 +616,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           }
           else {
             this.parentElement.querySelector(".awsme-error-con").style.display = "none";
+            localStorage.setItem('email_'+awsmeId, email)
             createLead(email);
             this.querySelector("input").value = "";
             this.parentElement.parentElement.querySelector(".awsme-successful-submit").style.display = "block";
@@ -892,3 +906,4 @@ async function updateMetric(team_metric="", subcollection="", sub_doc_ref="", su
   let message = JSON.parse(response).response;
   console.log(message);
 }
+
