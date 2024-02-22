@@ -300,9 +300,11 @@ white-space: inherit;
 font-weight: bold;
 }
 
+.awsme-chat-gif,
 .awsme-video-action {
   margin: 15px 0;
 }
+
 
 /* Email form */
 .awsme-email-form-wrapper {
