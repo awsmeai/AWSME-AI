@@ -224,7 +224,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           </p>
       </div>
     </div>
-    <div class="awsme-email-form-wrapper successful-submit" style="display: none;">
+    <div class="awsme-email-form-wrapper awsme-successful-submit" style="display: none;">
       <p>
         ${emailProvidedText}
       </p>
@@ -563,6 +563,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       reviewRefs.push("");
       questionsAndAnswers.push({"question": userMessage, "answer": message})
       conversation += `{assistant: ${message}}`;
+      conversation = conversation.replace(/{system:[^}]*}/g, '');
       
       return [message, action_data];
     }
