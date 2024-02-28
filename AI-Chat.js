@@ -32,6 +32,7 @@ const askEmail = "askEmail" in chatStyle ? chatStyle["askEmail"]:false;
 const askEmailTrigger = "askEmailTrigger" in chatStyle ? chatStyle["askEmailTrigger"]:"";
 const emailRequestText = "emailRequestText" in chatStyle ? chatStyle["emailRequestText"]:"";
 const emailProvidedText = "emailProvidedText" in chatStyle ? chatStyle["emailProvidedText"]:"";
+const noAnswerResponse = "noAnswerResponse" in chatStyle ? chatStyle["noAnswerResponse"]:"I don't have the information to answer that question for the moment. Is there anything else I can help you with?";
   
 let activeAI = "active" in chatStyle ? chatStyle["active"]: true;
 if (!activeAI) {
@@ -550,6 +551,9 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           message = message.replace(/{|}|\[.*?\]|\(.*?\)/g, '')
                      .replace(/\n/g, '<br>')
                      .replace(/(<br>){3,}/g, ' ').replace(/\<br><br>!<br><br>/g, '');
+          if (message.toLowerCase() == "null") {
+            message = noAnswerResponse;
+          }
         }
         else {
           console.log("Failed request to AI");
