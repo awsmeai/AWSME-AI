@@ -327,7 +327,7 @@ margin-right: 0px;
 border-right: none;
 -webkit-border-radius: 5px 0 0 5px;
 border-radius: 5px 0 0 5px;
-width: 100%;
+width: 100% !important;
 height: auto !important;
 font-size: 16px;
 flex: 1 1 auto;
