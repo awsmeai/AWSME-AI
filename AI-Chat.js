@@ -551,8 +551,8 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           message = message.replace(/{|}|\[.*?\]|\(.*?\)/g, '')
                      .replace(/\n/g, '<br>')
                      .replace(/(<br>){3,}/g, ' ').replace(/\<br><br>!<br><br>/g, '');
-          if (message.toLowerCase() == "null") {
-            message = noAnswerResponse;
+          if (message.toLowerCase() == "null" || message.toLowerCase().contains("null") {
+            message = noAnswerResponse + "\n\n";
           }
         }
         else {
