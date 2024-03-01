@@ -548,18 +548,16 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           message = message.replace(/{|}|\[.*?\]|\(.*?\)/g, '')
                      .replace(/\n/g, '<br>')
                      .replace(/(<br>){3,}/g, ' ').replace(/\<br><br>!<br><br>/g, '');
-          if (message.toLowerCase() == "null" || message.toLowerCase().contains("null")) {
+          if (message.toLowerCase() == "null") {
             message = noAnswerResponse + "\n\n";
           }
         }
         else {
           console.log("Failed request to AI");
-          console.log(response.response);
         }
       }
       catch {
         console.log("Failed request to AI");
-        console.log(response.response);
       }
       reviewRefs.push("");
       questionsAndAnswers.push({"question": userMessage, "answer": message})
