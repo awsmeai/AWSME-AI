@@ -1,4 +1,3 @@
- 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore.js";
 
@@ -270,6 +269,22 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         document.body.style.overflow = 'scroll';
       }
     });
+
+
+    function postmark_send_email_template(templateId, templateModel) {
+      let response = fetch('https://awsme.co/api/send-email/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                team_id: awsmeId,
+                template_id: templateId,
+                template_model: templateModel
+            }),
+        })
+    }
+
 
 
     // AI loader indicator HTML template
@@ -547,7 +562,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           message = response.response;
           message = message.replace(/{|}|\[.*?\]|\(.*?\)/g, '')
                      .replace(/\n/g, '<br>')
-                     .replace(/(<br>){3,}/g, ' ').replace(/\<br><br>!<br><br>/g, '');
+                     .replace(/(<br>){3,}/g, '<br>').replace(/\<br><br>!<br><br>/g, '');
           if (message.toLowerCase() == "null") {
             message = noAnswerResponse + "\n\n";
           }
@@ -618,6 +633,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
             this.parentElement.querySelector(".awsme-error-con").style.display = "none";
             localStorage.setItem('email_'+awsmeId, email)
             createLead(email);
+            postmark_send_email_template("35128606", {"visitor_email": email})
             this.querySelector("input").value = "";
             this.parentElement.parentElement.querySelector(".awsme-successful-submit").style.display = "block";
             this.parentElement.remove();
@@ -630,14 +646,18 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
     // Response review saving
     async function saveReview(rating, question, answer, reviewIndex) {
       updateMetric("numRatings");
+      let visitor_email = userEmail == "" ? userEmail: "anonymous visitor";
       if (rating == "Good") {
         updateMetric("numThumbsUp");
+        postmark_send_email_template("35046715", {"chat_question": question, "ai_response": answer, "visitor_email": visitor_email})
       }
       else if (rating == "Okay") {
         updateMetric("numThumbsNeutral");
+        postmark_send_email_template("35118313", {"chat_question": question, "ai_response": answer, "visitor_email": visitor_email})
       }
       else if (rating == "Bad") {
         updateMetric("numThumbsDown");
+        postmark_send_email_template("35046526", {"chat_question": question, "ai_response": answer, "visitor_email": visitor_email})
       }
       let response = await fetch('https://awsme.co/api/save-review/', {
         method: 'POST',
@@ -906,4 +926,3 @@ async function updateMetric(team_metric="", subcollection="", sub_doc_ref="", su
   let message = JSON.parse(response).response;
   console.log(message);
 }
-
