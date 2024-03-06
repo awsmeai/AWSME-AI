@@ -647,17 +647,18 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
     async function saveReview(rating, question, answer, reviewIndex) {
       updateMetric("numRatings");
       let visitor_email = userEmail == "" ? userEmail: "anonymous visitor";
+      let modifiedQuestion = question.replace(/(<br>){1,}/g, ' ');
       if (rating == "Good") {
         updateMetric("numThumbsUp");
-        postmark_send_email_template("35046715", {"chat_question": question, "ai_response": answer, "visitor_email": visitor_email})
+        postmark_send_email_template("35046715", {"chat_question": modifiedQuestion, "ai_response": answer, "visitor_email": visitor_email})
       }
       else if (rating == "Okay") {
         updateMetric("numThumbsNeutral");
-        postmark_send_email_template("35118313", {"chat_question": question, "ai_response": answer, "visitor_email": visitor_email})
+        postmark_send_email_template("35118313", {"chat_question": modifiedQuestion, "ai_response": answer, "visitor_email": visitor_email})
       }
       else if (rating == "Bad") {
         updateMetric("numThumbsDown");
-        postmark_send_email_template("35046526", {"chat_question": question, "ai_response": answer, "visitor_email": visitor_email})
+        postmark_send_email_template("35046526", {"chat_question": modifiedQuestion, "ai_response": answer, "visitor_email": visitor_email})
       }
       let response = await fetch('https://awsme.co/api/save-review/', {
         method: 'POST',
