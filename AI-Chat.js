@@ -509,6 +509,36 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
     }   
  
 
+    async function createNewConvDoc(question, answer) {
+      try {
+        let response = await fetch('https://awsme.co/api/create-conv/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                team_id: awsmeId,
+                question: question,
+                answer: answer
+            }),
+        })
+        if (response.ok) {
+          response = await response.text();
+          response = JSON.parse(response);
+          let conversation_ref = response.conversation_ref;
+          return conversation_ref;
+        }
+        else {
+          console.log("Failed to create conversation");
+          return "";
+        }
+      }
+      catch {
+        console.log("Failed create conversation");
+        return "";
+      }
+    }
+
     
     let conversation = "";
     if (userEmail != "") {
@@ -517,13 +547,13 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         
     let reviewRefs = [];
     let questionsAndAnswers = [];
+    let conversationId = "";
     async function getAIResponse(userMessage) {
-      userMessage = userMessage.replace("{", "");
-      userMessage = userMessage.replace("}", "");
+      userMessage = userMessage.replace("{", "").replace("}", "");
       let lead_stage = localStorage.getItem('lead_stage_'+awsmeId) != null ? localStorage.getItem('lead_stage_'+awsmeId): "";
       let lead_ref = localStorage.getItem('lead_ref_'+awsmeId) != null ? localStorage.getItem('lead_ref_'+awsmeId): "";
       let newMessage = `{user: ${userMessage}}`;
-      while (conversation.length > 300) {
+      while (conversation.length > 0) {
           conversation = conversation.substring(conversation.indexOf('}') + 1).trim();
       }
       conversation += newMessage;
@@ -549,6 +579,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
                 user_id: awsmeId,
                 lead_stage: lead_stage,
                 lead_ref: lead_ref,
+                conv_ref: conversationId,
                 new_session: new_session,
                 crm_ids: crm_ids
             }),
@@ -578,7 +609,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       questionsAndAnswers.push({"question": userMessage, "answer": message})
       conversation += `{assistant: ${message}}`;
       conversation = conversation.replace(/{system:[^}]*}/g, '');
-      
+  
       return [message, action_data];
     }
 
@@ -592,6 +623,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           body: JSON.stringify({
               email: email, 
               messages: conversation,
+              conv_ref: conversationId,
               user_id: awsmeId
           }),
       })
@@ -855,6 +887,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
 
       updateClickEvents();
       if (firstEngagement) {
+          conversationId = await createNewConvDoc(inputText.replace("{", "").replace("}", ""), aiResponse);
           firstEngagement = false;
           updateMetric("numEngagements");
       }
