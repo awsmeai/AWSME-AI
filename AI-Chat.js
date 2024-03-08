@@ -38,7 +38,7 @@ if (!activeAI) {
   return null;
 }
 
-const triggerPos = "triggerPos" in chatStyle ? chatStyle["triggerPos"]:"bottom";
+const triggerPos = ("triggerPos" in chatStyle ? chatStyle["triggerPos"]:"bottom").toLowerCase();
 let triggerPosCSS;
 if (triggerPos == "top") {
   triggerPosCSS = "top: 15%;";
