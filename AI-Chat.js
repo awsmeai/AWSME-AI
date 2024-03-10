@@ -553,7 +553,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       let lead_stage = localStorage.getItem('lead_stage_'+awsmeId) != null ? localStorage.getItem('lead_stage_'+awsmeId): "";
       let lead_ref = localStorage.getItem('lead_ref_'+awsmeId) != null ? localStorage.getItem('lead_ref_'+awsmeId): "";
       let newMessage = `{user: ${userMessage}}`;
-      while (conversation.length > 0) {
+      while (conversation.length > 300) {
           conversation = conversation.substring(conversation.indexOf('}') + 1).trim();
       }
       conversation += newMessage;
