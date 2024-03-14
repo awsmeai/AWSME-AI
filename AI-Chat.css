@@ -315,12 +315,18 @@ border-radius: 5px;
 margin: 25px 0 10px;
 min-width: 100%;
 }
-.awsme-email-form {
+.awsme-input-group {
 display: flex;
 align-items: center;
 align-items: stretch;
 margin-bottom: 0 !important;
 }
+
+.awsme-input-group.opt-field {
+  margin-bottom: 15px;
+}
+
+.awsme-email-form input[type=text],
 .awsme-email-form input[type=email] {
 padding: 10px;
 margin-right: 0px;

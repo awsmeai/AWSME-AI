@@ -212,8 +212,16 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
 
   const emailFormHTML = `<div class="awsme-email-form-wrapper">
       <form class="awsme-email-form">
-        <input type="email" id="email" name="email" placeholder="Email address...">
-        <button type="submit"><svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 512 512"><path d="M3.4 78.3c-6-12-3.9-26.5 5.3-36.3s23.5-12.7 35.9-7.5l448 192c11.8 5 19.4 16.6 19.4 29.4s-7.6 24.4-19.4 29.4l-448 192c-12.3 5.3-26.7 2.3-35.9-7.5s-11.3-24.3-5.3-36.3L92.2 256 3.4 78.3zM120 272L32 448 442.7 272H120zm322.7-32L32 64l88 176H442.7z"/></svg></button>
+        <div class="awsme-input-group opt-field">
+          <input type="text" id="name" name="name" placeholder="Name...">
+        </div>
+        <div class="awsme-input-group opt-field">
+          <input type="text" id="phone" name="phone" placeholder="Phone Number...">
+        </div>
+        <div class="awsme-input-group">
+          <input type="email" id="email" name="email" placeholder="Email address...">
+          <button type="submit"><svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 512 512"><path d="M3.4 78.3c-6-12-3.9-26.5 5.3-36.3s23.5-12.7 35.9-7.5l448 192c11.8 5 19.4 16.6 19.4 29.4s-7.6 24.4-19.4 29.4l-448 192c-12.3 5.3-26.7 2.3-35.9-7.5s-11.3-24.3-5.3-36.3L92.2 256 3.4 78.3zM120 272L32 448 442.7 272H120zm322.7-32L32 64l88 176H442.7z"/></svg></button>
+        </div>
       </form>
       <div class="awsme-error-con" style="display:none;">
           <p>
