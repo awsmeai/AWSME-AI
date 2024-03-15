@@ -327,7 +327,8 @@ margin-bottom: 0 !important;
 }
 
 .awsme-email-form input[type=text],
-.awsme-email-form input[type=email] {
+.awsme-email-form input[type=email],
+.awsme-email-form input[type=tel] {
 padding: 10px;
 margin-right: 0px;
 border-right: none;
