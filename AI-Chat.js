@@ -31,8 +31,9 @@ const askEmail = "askEmail" in chatStyle ? chatStyle["askEmail"]:false;
 const askEmailTrigger = "askEmailTrigger" in chatStyle ? chatStyle["askEmailTrigger"]:"";
 const emailRequestText = "emailRequestText" in chatStyle ? chatStyle["emailRequestText"]:"";
 const emailProvidedText = "emailProvidedText" in chatStyle ? chatStyle["emailProvidedText"]:"";
-const noAnswerResponse = "noAnswerResponse" in chatStyle ? chatStyle["noAnswerResponse"]:"I don't have the information to answer that question for the moment. Is there anything else I can help you with?";
-  
+const useNameInput = "useNameInput" in chatStyle ? chatStyle["useNameInput"]: false;
+const usePhoneInput = "usePhoneInput" in chatStyle ? chatStyle["usePhoneInput"]: false;
+
 let activeAI = "active" in chatStyle ? chatStyle["active"]: true;
 if (!activeAI) {
   return null;
@@ -155,7 +156,9 @@ var dynamicAddedCSS = `.awsme-ai-chat .awsme-trigger {
        background-color: ${emailBoxBgCol};
         border: 1px solid ${emailBoxBrCol};
       }
-      .awsme-email-form input[type=email] {
+      .awsme-email-form input[type=email],
+      .awsme-email-form input[type=text], 
+      .awsme-email-form input[type=tel] {
         border: 1px solid ${emailInputBrCol};
         background: ${emailInputBgCol};
         color: ${emailInputTextCol};
@@ -212,20 +215,34 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
 
   const emailFormHTML = `<div class="awsme-email-form-wrapper">
       <form class="awsme-email-form">
-        <div class="awsme-input-group opt-field">
-          <input type="text" id="name" name="name" placeholder="Name...">
-        </div>
-        <div class="awsme-input-group opt-field">
-          <input type="text" id="phone" name="phone" placeholder="Phone Number...">
-        </div>
+      ${useNameInput ? 
+        `<div class="awsme-input-group opt-field">
+          <input type="text" id="name" name="name" style="margin-bottom: 10px" placeholder="Name...">
+        </div>`: ""
+      }
+      ${usePhoneInput ? 
+        `<div class="awsme-input-group opt-field">
+          <input type="tel" id="phone" name="phone" style="margin-bottom: 10px" placeholder="Phone Number...">
+        </div>`: ""
+      }
         <div class="awsme-input-group">
           <input type="email" id="email" name="email" placeholder="Email address...">
           <button type="submit"><svg xmlns="http://www.w3.org/2000/svg" height="18" width="18" viewBox="0 0 512 512"><path d="M3.4 78.3c-6-12-3.9-26.5 5.3-36.3s23.5-12.7 35.9-7.5l448 192c11.8 5 19.4 16.6 19.4 29.4s-7.6 24.4-19.4 29.4l-448 192c-12.3 5.3-26.7 2.3-35.9-7.5s-11.3-24.3-5.3-36.3L92.2 256 3.4 78.3zM120 272L32 448 442.7 272H120zm322.7-32L32 64l88 176H442.7z"/></svg></button>
         </div>
       </form>
-      <div class="awsme-error-con" style="display:none;">
+      <div class="awsme-name-error-con" style="display:none;">
+          <p>
+            Please enter a name
+          </p>
+      </div>
+      <div class="awsme-email-error-con" style="display:none;">
           <p>
             Please enter a valid email address.
+          </p>
+      </div>
+      <div class="awsme-phone-error-con" style="display:none;">
+          <p>
+            Please enter a valid phone number
           </p>
       </div>
     </div>
@@ -255,7 +272,9 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
 
   setTimeout(function() {
     // Get users stored email for AWSME AI
+    let userName = localStorage.getItem('name_'+awsmeId) != null ? localStorage.getItem('name_'+awsmeId): "";
     let userEmail = localStorage.getItem('email_'+awsmeId) != null ? localStorage.getItem('email_'+awsmeId): "";
+    let isLead = localStorage.getItem('isLead_'+awsmeId) == "true";
     
     let firstClick = true;
     triggerButton.addEventListener('click', () => {
@@ -498,7 +517,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       }
 
       let lead_ref = localStorage.getItem('lead_ref_'+awsmeId) != null ? localStorage.getItem('lead_ref_'+awsmeId): "";
-      if (lead_ref == "" && askEmail && userEmail == "") {
+      if (lead_ref == "" && askEmail && !isLead) {
         if (askEmailTrigger == "firstMsg" && questionsAndAnswers.length == 1) {
           stringList = [...stringList, "\n", ...emailRequestText.split("")];
           stringList.push(emailFormHTML);
@@ -549,7 +568,10 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
 
     
     let conversation = "";
-    if (userEmail != "") {
+    if (userName != "") {
+      conversation += "{system: Greet the user by name in the next response, their name is: " + userName + "}";
+    }
+    else if (userEmail != "") {
       conversation += "{system: Greet the user by name in the next response, here is their email as a reference for their name: " + userEmail + "}";
     }
         
@@ -602,9 +624,6 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
           message = message.replace(/{|}|\[.*?\]|\(.*?\)/g, '')
                      .replace(/\n/g, '<br>')
                      .replace(/(<br>){3,}/g, '<br>').replace(/\<br><br>!<br><br>/g, '');
-          if (message.toLowerCase() == "null") {
-            message = noAnswerResponse + "\n\n";
-          }
         }
         else {
           console.log("Failed request to AI");
@@ -622,14 +641,16 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
     }
 
     // Create new lead in database
-    async function createLead(email) {
+    async function createLead(name, email, phone) {
       let response = await fetch('https://awsme.co/api/create-lead/', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+              name: name,
               email: email, 
+              phone: phone,
               messages: conversation,
               conv_ref: conversationId,
               user_id: awsmeId
@@ -657,6 +678,11 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
       return emailRegex.test(email);
     }
+
+    function isValidPhoneNumber(phoneNumber) {
+      const phoneRegex = /^[0-9()+\-, .\s]{7,20}$/;
+      return phoneRegex.test(phoneNumber);
+  }
     
     // Set email capture action
     function setFormAction() {
@@ -665,16 +691,47 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         let form = forms[forms.length-1];
         form.addEventListener("submit", function(event) {
           event.preventDefault();
-          let email = this.querySelector("input").value;
-          if (!isValidEmail(email)) {
-            this.parentElement.querySelector(".awsme-error-con").style.display = "block";
+          let email = this.querySelector("#email").value;
+          let name = "";
+          if (useNameInput) {
+            name = this.querySelector("#name").value;
+          }
+          let phone = "";
+          if (usePhoneInput) {
+            phone = this.querySelector("#phone").value;
+          }
+
+          if (useNameInput && name.length == 0) {
+            this.parentElement.querySelector(".awsme-name-error-con").style.display = "block";
+          }
+          else if (!isValidEmail(email)) {
+            this.parentElement.querySelector(".awsme-email-error-con").style.display = "block";
+          }
+          else if (usePhoneInput && !isValidPhoneNumber(phone)) {
+            this.parentElement.querySelector(".awsme-phone-error-con").style.display = "block";
           }
           else {
-            this.parentElement.querySelector(".awsme-error-con").style.display = "none";
+            this.parentElement.querySelector(".awsme-name-error-con").style.display = "none";
+            this.parentElement.querySelector(".awsme-email-error-con").style.display = "none";
+            this.parentElement.querySelector(".awsme-phone-error-con").style.display = "none";
+            localStorage.setItem('name_'+awsmeId, name)
             localStorage.setItem('email_'+awsmeId, email)
-            createLead(email);
-            postmark_send_email_template("35128606", {"visitor_email": email})
-            this.querySelector("input").value = "";
+            localStorage.setItem('isLead_'+awsmeId, true)
+            createLead(name, email, phone);
+            
+            let lead_email_parameters = {"visitor_email": email};
+            this.querySelector("#email").value = "";
+            if (name != "") {
+              lead_email_parameters["visitor_name"] = name
+              this.querySelector("#name").value = "";
+            }
+            if (phone != "") {
+              lead_email_parameters["visitor_phone"] = phone
+              this.querySelector("#phone").value = ""
+            }
+
+            postmark_send_email_template("35128606", lead_email_parameters)
+            
             this.parentElement.parentElement.querySelector(".awsme-successful-submit").style.display = "block";
             this.parentElement.remove();
           }
@@ -686,7 +743,10 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
     // Response review saving
     async function saveReview(rating, question, answer, reviewIndex) {
       updateMetric("numRatings");
-      let visitor_email = userEmail == "" ? userEmail: "anonymous visitor";
+      let visitor_name = userName != "" ? userName: "anonymous visitor";
+      if (visitor_name == "") {
+        visitor_name = userEmail != "" ? userEmail: "anonymous visitor";
+      }
       
       let questionParagraphs = question.replace(/\n\n/g, "<br><br>").split(/\<br\><br\>/ig).map(function(x) {
           return {"paragraph": x};
@@ -697,15 +757,15 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       
       if (rating == "Good") {
         updateMetric("numThumbsUp");
-        postmark_send_email_template("35046715", {"chat_question": questionParagraphs, "ai_response": answerParagraphs, "visitor_email": visitor_email})
+        postmark_send_email_template("35046715", {"chat_question": questionParagraphs, "ai_response": answerParagraphs, "visitor_name": visitor_name})
       }
       else if (rating == "Okay") {
-        updateMetric("numThumbsNeutral");
-        postmark_send_email_template("35118313", {"chat_question": questionParagraphs, "ai_response": answerParagraphs, "visitor_email": visitor_email})
+        updateMetric("numThumbsNeutral")
+        postmark_send_email_template("35118313", {"chat_question": questionParagraphs, "ai_response": answerParagraphs, "visitor_name": visitor_name})
       }
       else if (rating == "Bad") {
         updateMetric("numThumbsDown");
-        postmark_send_email_template("35046526", {"chat_question": questionParagraphs, "ai_response": answerParagraphs, "visitor_email": visitor_email})
+        postmark_send_email_template("35046526", {"chat_question": questionParagraphs, "ai_response": answerParagraphs, "visitor_name": visitor_name})
       }
       let response = await fetch('https://awsme.co/api/save-review/', {
         method: 'POST',
@@ -902,7 +962,9 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
 
       updateClickEvents();
       if (firstEngagement) {
-          conversationId = await createNewConvDoc(inputText.replace("{", "").replace("}", ""), aiResponse);
+          if (!isLead) {
+            conversationId = await createNewConvDoc(inputText.replace("{", "").replace("}", ""), aiResponse);
+          }
           firstEngagement = false;
           updateMetric("numEngagements");
       }
