@@ -33,6 +33,9 @@ const emailRequestText = "emailRequestText" in chatStyle ? chatStyle["emailReque
 const emailProvidedText = "emailProvidedText" in chatStyle ? chatStyle["emailProvidedText"]:"";
 const useNameInput = "useNameInput" in chatStyle ? chatStyle["useNameInput"]: false;
 const usePhoneInput = "usePhoneInput" in chatStyle ? chatStyle["usePhoneInput"]: false;
+const autoOpen = "autoOpen" in chatStyle ? chatStyle["autoOpen"]: false;
+const splitScreen = "splitScreen" in chatStyle ? chatStyle["splitScreen"]: false;
+let chatWidth = "chatWidth" in chatStyle ? chatStyle["chatWidth"]: 575;
 
 let activeAI = "active" in chatStyle ? chatStyle["active"]: true;
 if (!activeAI) {
@@ -83,7 +86,11 @@ const emailSubmitIconHoverCol = "emailSubmitIconHoverCol" in chatStyle ? chatSty
   
 // Applying dynamic style here
 var newStyleTag = document.createElement('style');
-var dynamicAddedCSS = `.awsme-ai-chat .awsme-trigger {
+var dynamicAddedCSS = `.awsme-sidebar {
+      max-width: ${chatWidth}px;
+      right: -${chatWidth}px;
+    }
+    .awsme-ai-chat .awsme-trigger {
       background-color: ${triggerBgCol};
       ${triggerPosCSS}
     }      
@@ -257,7 +264,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
   tempDiv.innerHTML = chatHTML;
   document.body.appendChild(tempDiv.firstElementChild);
   
-  const chatWidth = screen.width > 580 ? 580:screen.width;
+  chatWidth = screen.width > chatWidth ? chatWidth:screen.width;
   const triggerButton = document.querySelector('.awsme-trigger');
   const sendButton = document.querySelector('.awsme-send-icon');
   const closeButton = document.querySelector('.awsme-close-x');
@@ -275,26 +282,44 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
     let userName = localStorage.getItem('name_'+awsmeId) != null ? localStorage.getItem('name_'+awsmeId): "";
     let userEmail = localStorage.getItem('email_'+awsmeId) != null ? localStorage.getItem('email_'+awsmeId): "";
     let isLead = localStorage.getItem('isLead_'+awsmeId) == "true";
-    
     let firstClick = true;
-    triggerButton.addEventListener('click', () => {
+    
+    function openSidebar() {
       sidebar.style.right = '0';
       if (firstClick) {
         updateMetric("numTriggerClicks");
         firstClick = false;
       }
-      if (window.innerWidth < 575) {
+      if (splitScreen && screen.width >= 2* chatWidth) {
+        document.documentElement.style.transition = "0.3s ease-in-out"
+        document.documentElement.style.marginRight = chatWidth + "px";
+      }
+      if (chatWidth == screen.width) {
         document.body.style.overflow = 'hidden';
       }
       else {
         document.querySelector(".awsme-user-input").focus();
       }
-    });
-    closeButton.addEventListener('click', () => {
+    }
+    function closeSidebar() {
       sidebar.style.right = '-' + chatWidth + 'px';
       if (window.innerWidth < 575) {
         document.body.style.overflow = 'scroll';
       }
+      if (splitScreen && screen.width >= 2* chatWidth) {
+        document.documentElement.style.marginRight = "0px";
+      }
+    }
+
+    if (autoOpen) {
+      openSidebar();
+    }
+    
+    triggerButton.addEventListener('click', () => {
+      openSidebar();
+    });
+    closeButton.addEventListener('click', () => {
+      closeSidebar()
     });
 
 
