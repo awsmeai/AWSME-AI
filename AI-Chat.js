@@ -277,11 +277,34 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
                             '<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM176.4 176a32 32 0 1 1 0 64 32 32 0 1 1 0-64zm128 32a32 32 0 1 1 64 0 32 32 0 1 1 -64 0zM160 336H352c8.8 0 16 7.2 16 16s-7.2 16-16 16H160c-8.8 0-16-7.2-16-16s7.2-16 16-16z"/></svg>',
                             '<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path d="M313.4 479.1c26-5.2 42.9-30.5 37.7-56.5l-2.3-11.4c-5.3-26.7-15.1-52.1-28.8-75.2H464c26.5 0 48-21.5 48-48c0-18.5-10.5-34.6-25.9-42.6C497 236.6 504 223.1 504 208c0-23.4-16.8-42.9-38.9-47.1c4.4-7.3 6.9-15.8 6.9-24.9c0-21.3-13.9-39.4-33.1-45.6c.7-3.3 1.1-6.8 1.1-10.4c0-26.5-21.5-48-48-48H294.5c-19 0-37.5 5.6-53.3 16.1L202.7 73.8C176 91.6 160 121.6 160 153.7V192v48 24.9c0 29.2 13.3 56.7 36 75l7.4 5.9c26.5 21.2 44.6 51 51.2 84.2l2.3 11.4c5.2 26 30.5 42.9 56.5 37.7zM32 384H96c17.7 0 32-14.3 32-32V128c0-17.7-14.3-32-32-32H32C14.3 96 0 110.3 0 128V352c0 17.7 14.3 32 32 32z"/></svg>']
 
+  function setWithExpiry(key, value, ttl) {
+    const now = new Date();
+    const item = {
+        value: value,
+        expiry: now.getTime() + ttl,
+    };
+    localStorage.setItem(key, JSON.stringify(item));
+  }
+  function getWithExpiry(key) {
+    const itemStr = localStorage.getItem(key);
+    if (!itemStr) {
+      return null;
+    }
+    const item = JSON.parse(itemStr);
+    const now = new Date();
+    if (now.getTime() > item.expiry) {
+      localStorage.removeItem(key);
+      return null;
+    }
+    return item.value;
+  }
+  
   setTimeout(function() {
     // Get users stored email for AWSME AI
     let userName = localStorage.getItem('name_'+awsmeId) != null ? localStorage.getItem('name_'+awsmeId): "";
     let userEmail = localStorage.getItem('email_'+awsmeId) != null ? localStorage.getItem('email_'+awsmeId): "";
     let isLead = localStorage.getItem('isLead_'+awsmeId) == "true";
+    let openChat = getWithExpiry('open_chat_'+awsmeId) != null ? getWithExpiry('open_chat_'+awsmeId):true;
     let firstClick = true;
     
     function openSidebar() {
@@ -300,6 +323,9 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       else {
         document.querySelector(".awsme-user-input").focus();
       }
+      if (autoOpen) {
+        setWithExpiry('open_chat_'+awsmeId, true, 3600000)
+      }
     }
     function closeSidebar() {
       sidebar.style.right = '-' + chatWidth + 'px';
@@ -309,9 +335,12 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       if (splitScreen && screen.width >= 2* chatWidth) {
         document.documentElement.style.marginRight = "0px";
       }
+      if (autoOpen) {
+        setWithExpiry('open_chat_'+awsmeId, false, 3600000)
+      }
     }
-
-    if (autoOpen) {
+    
+    if (autoOpen && openChat) {
       openSidebar();
     }
     
