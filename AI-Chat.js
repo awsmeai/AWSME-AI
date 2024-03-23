@@ -548,7 +548,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         let action_url = action_data[1]
         let action_cta = action_data[2]
         let action_type = action_data[3]
-        let action_ratio = action_data[4]
+        let action_ratio = parseFloat(action_data[4])
         updateMetric('', 'action', action_id, 'views');
         let ctaHTML = "";
         if (action_type == "link") {
