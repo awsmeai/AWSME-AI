@@ -305,6 +305,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
     let userEmail = localStorage.getItem('email_'+awsmeId) != null ? localStorage.getItem('email_'+awsmeId): "";
     let isLead = localStorage.getItem('isLead_'+awsmeId) == "true";
     let openChat = getWithExpiry('open_chat_'+awsmeId) != null ? getWithExpiry('open_chat_'+awsmeId):true;
+    let usedInteractions = [];
     let firstClick = true;
     
     function openSidebar() {
@@ -544,7 +545,8 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
       let newString = string.replace(/<br>/g, "§");
       let stringList = newString.split("");
       stringList = stringList.map(item => item.replace(/§/g, "<br>"))
-      if (action_id.length == 20) {
+      if (action_id.length > 10 && !usedInteractions.includes(action_id)) {
+        usedInteractions.push(action_id)
         let action_url = action_data[1]
         let action_cta = action_data[2]
         let action_type = action_data[3]
