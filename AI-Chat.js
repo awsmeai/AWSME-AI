@@ -301,7 +301,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
   
   setTimeout(function() {
     // Get users stored email for AWSME AI
-    let userName = localStorage.getItem('name_'+awsmeId) != null ? localStorage.getItem('name_'+awsmeId): "";
+    let userName = (localStorage.getItem('name_'+awsmeId) != null && localStorage.getItem('name_'+awsmeId) != "") ? localStorage.getItem('name_'+awsmeId): "";
     let userEmail = localStorage.getItem('email_'+awsmeId) != null ? localStorage.getItem('email_'+awsmeId): "";
     let isLead = localStorage.getItem('isLead_'+awsmeId) == "true";
     let openChat = getWithExpiry('open_chat_'+awsmeId) != null ? getWithExpiry('open_chat_'+awsmeId):true;
@@ -770,7 +770,9 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
             this.parentElement.querySelector(".awsme-name-error-con").style.display = "none";
             this.parentElement.querySelector(".awsme-email-error-con").style.display = "none";
             this.parentElement.querySelector(".awsme-phone-error-con").style.display = "none";
-            localStorage.setItem('name_'+awsmeId, name)
+            if (name.length != 0) {
+              localStorage.setItem('name_'+awsmeId, name)
+            }
             localStorage.setItem('email_'+awsmeId, email)
             localStorage.setItem('isLead_'+awsmeId, true)
             createLead(name, email, phone);
