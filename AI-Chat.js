@@ -562,7 +562,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         updateMetric('', 'action', action_id, 'views');
         let ctaHTML = "";
         if (action_type == "link") {
-          ctaHTML = `<a class="${className} awsme-link-action awsme-cta-callout" id="${action_id}" ="${action_url}" target="_blank">
+          ctaHTML = `<a class="${className} awsme-link-action awsme-cta-callout" id="${action_id}" href="${action_url}" target="_blank">
             <span class="awsme-cta-callout-label">${action_cta}</span>
             </a>`
         }
