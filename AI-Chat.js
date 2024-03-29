@@ -69,8 +69,12 @@ const closeNormalCol = "closeNormalCol" in chatStyle ? chatStyle["closeNormalCol
 const closeHoverCol = "closeHoverCol" in chatStyle ? chatStyle["closeHoverCol"] : "#BE0BB3";
 const scoreIconNormalCol = "scoreIconNormalCol" in chatStyle ? chatStyle["scoreIconNormalCol"] : "#BE0BB3";
 const scoreIconActiveCol = "scoreIconActiveCol" in chatStyle ? chatStyle["scoreIconActiveCol"] : "#1c1c1c";
-const linkNormalCol = "linkNormalCol" in chatStyle ? chatStyle["linkNormalCol"] : "#BE0BB3";
-const linkHoverCol = "linkHoverCol" in chatStyle ? chatStyle["linkHoverCol"] : "#171621";
+
+const linkNormalCol = "linkNormalCol" in chatStyle ? chatStyle["linkNormalCol"] : "#ffffff";
+const linkHoverCol = "linkHoverCol" in chatStyle ? chatStyle["linkHoverCol"] : "#ffffff";
+const linkBgNormalCol = "linkBgNormalCol" in chatStyle ? chatStyle["linkBgNormalCol"] : "#00000000";
+const linkBgHoverCol = "linkBgHoverCol" in chatStyle ? chatStyle["linkBgHoverCol"] : "#00000000";
+
 const emailBoxBgCol = "emailBoxBgCol" in chatStyle ? chatStyle["emailBoxBgCol"] : "#f9f9f9";
 const emailBoxBrCol = "emailBoxBrCol" in chatStyle ? chatStyle["emailBoxBrCol"] : "#dddddd";
 const emailInputBgCol = "emailInputBgCol" in chatStyle ? chatStyle["emailInputBgCol"] : "#ffffff";
@@ -81,9 +85,6 @@ const emailSubmitBgHoverCol = "emailSubmitBgHoverCol" in chatStyle ? chatStyle["
 const emailSubmitIconCol = "emailSubmitIconCol" in chatStyle ? chatStyle["emailSubmitIconCol"] : "#ffffff";
 const emailSubmitIconHoverCol = "emailSubmitIconHoverCol" in chatStyle ? chatStyle["emailSubmitIconHoverCol"] : "#ffffff";
 
-// -------------------------
-
-  
 // Applying dynamic style here
 var newStyleTag = document.createElement('style');
 var dynamicAddedCSS = `.awsme-sidebar {
@@ -134,11 +135,18 @@ var dynamicAddedCSS = `.awsme-sidebar {
     .awsme-ai-chat .awsme-review-options .awsme-active-icon svg {
       fill: ${scoreIconActiveCol} !important;
     }
+
     .awsme-ai-chat .awsme-cta-callout-label {
       color: ${linkNormalCol};
+      background-color: ${linkBgNormalCol};
+      padding: 10px 20px;
+      border-radius: 5px;
+      font-size: 18px;
+      font-weight: 500;
     }
     .awsme-ai-chat .awsme-cta-callout-label:hover {
       color: ${linkHoverCol};
+      background-color: ${linkBgHoverCol};
     }
 
     .awsme-chat-area::-webkit-scrollbar {
@@ -554,7 +562,7 @@ const chatHTML = `<div class="awsme-ai-chat fade-in" style="z-index:1000000; pos
         updateMetric('', 'action', action_id, 'views');
         let ctaHTML = "";
         if (action_type == "link") {
-          ctaHTML = `<a class="${className} awsme-link-action awsme-cta-callout" id="${action_id}" href="${action_url}" target="_blank">
+          ctaHTML = `<a class="${className} awsme-link-action awsme-cta-callout" id="${action_id}" ="${action_url}" target="_blank">
             <span class="awsme-cta-callout-label">${action_cta}</span>
             </a>`
         }
