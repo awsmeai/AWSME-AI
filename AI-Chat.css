@@ -7,10 +7,14 @@
   }
 }
 .awsme-fade-in {
-  animation-name: fadeAnimation;
-  animation-duration: 0.5s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: 1;
+  animation-name: fadeAnimation !important;
+  animation-duration: 1s !important;
+  animation-timing-function: ease-in-out !important;
+  animation-iteration-count: 1 !important;
+}
+
+.awsme-trigger-col {
+  position: relative;
 }
 
 .awsme-trigger {
@@ -21,7 +25,53 @@ position: fixed;
 right: 0px;
 -webkit-border-radius: 5px 0 0 5px;
 border-radius: 5px 0 0 5px;
-max-width: 200px;
+transition: 0.5s ease-out;
+}
+
+.awsme-inner-trigger {
+  display: flex; 
+  margin-left:8px;
+  align-items: center;
+}
+
+.awsme-hide-trigger-btn {
+  position: fixed;
+  background-color: black;
+  width: 28px;
+  height: 28px;
+  border-radius: 15px;
+  transform: translateY(-70px);
+  right: 10px;
+  cursor: pointer;
+}
+.awsme-hide-trigger-btn-arrows {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+.awsme-hide-trigger-btn-arrows::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border: 2px solid white;
+  border-left: none;
+  border-bottom: none;
+  position:absolute;
+  right: calc(50% + 5px);;
+  top: 50%;
+  transform: translate(50%, -50%) rotate(45deg);
+}
+.awsme-hide-trigger-btn-arrows::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border: 2px solid white;
+  border-left: none;
+  border-bottom: none;
+  position:absolute;
+  right: calc(50% - 3px);;
+  top: 50%;
+  transform: translate(50%, -50%) rotate(45deg);
 }
 
 @keyframes wave-animation {
