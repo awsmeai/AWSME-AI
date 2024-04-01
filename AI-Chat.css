@@ -1,3 +1,4 @@
+
 @keyframes fadeAnimation {
   0% {
       opacity: 0;
@@ -13,16 +14,20 @@
   animation-iteration-count: 1 !important;
 }
 
-.awsme-trigger-col {
+.awsme-trigger-con {
+  position: fixed;
+  right: 0px;
+  transition: 0.5s ease-out;
+}
+.awsme-trigger-con-grid {
   position: relative;
 }
-
 .awsme-trigger {
+position: fixed;
+right: 0px;
 cursor: pointer !important;
 padding: 15px;
 font-size: 16px;
-position: fixed;
-right: 0px;
 -webkit-border-radius: 5px 0 0 5px;
 border-radius: 5px 0 0 5px;
 transition: 0.5s ease-out;
@@ -35,12 +40,12 @@ transition: 0.5s ease-out;
 }
 
 .awsme-hide-trigger-btn {
-  position: fixed;
+  position: absolute;
   background-color: black;
   width: 28px;
   height: 28px;
   border-radius: 15px;
-  transform: translateY(-70px);
+  top: -40px;
   right: 10px;
   cursor: pointer;
 }
