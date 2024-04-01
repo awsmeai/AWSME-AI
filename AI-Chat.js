@@ -93,9 +93,8 @@ var dynamicAddedCSS = `.awsme-sidebar {
     }
     .awsme-ai-chat .awsme-trigger {
       background-color: ${triggerBgCol};
-      ${triggerPosCSS}
     } 
-    .awsme-hide-trigger-btn {
+    .awsme-trigger-con {
       ${triggerPosCSS}
     }
     .awsme-ai-chat .awsme-trigger p {
@@ -199,18 +198,23 @@ document.head.appendChild(newStyleTag);
 
  
 const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:1000000; position: relative;">
-    <div class="awsme-hide-trigger-btn">
-      <div class="awsme-hide-trigger-btn-arrows"></div>
-    </div>
-    <div class="awsme-trigger">
-      <span class="awsme-wave">👋</span> 
-      <div class="awsme-inner-trigger">
-        <div class="awsme-profile awsme-bot-image" style="margin-right:10px; border:1px solid white; width:30px; height:30px;"></div>
-        <p style="margin-bottom: 0px;">
-          ${triggerLabel}
-        </p>
+    <div class="awsme-trigger-con">
+      <div class="awsme-trigger-con-grid">
+        <div class="awsme-hide-trigger-btn">
+          <div class="awsme-hide-trigger-btn-arrows"></div>
+        </div>
+        <div class="awsme-trigger">
+          <span class="awsme-wave">👋</span> 
+          <div class="awsme-inner-trigger">
+            <div class="awsme-profile awsme-bot-image" style="margin-right:10px; border:1px solid white; width:30px; height:30px;"></div>
+            <p style="margin-bottom: 0px;">
+              ${triggerLabel}
+            </p>
+          </div>
+        </div>
       </div>
     </div>
+    
   <div class="awsme-sidebar">
     <div class="awsme-top-area">
       <div class="awsme-close-x"><svg xmlns="http://www.w3.org/2000/svg" height="16" width="12" viewBox="0 0 384 512"><path d="M324.5 411.1c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6L214.6 256 347.1 123.5c6.2-6.2 6.2-16.4 0-22.6s-16.4-6.2-22.6 0L192 233.4 59.5 100.9c-6.2-6.2-16.4-6.2-22.6 0s-6.2 16.4 0 22.6L169.4 256 36.9 388.5c-6.2 6.2-6.2 16.4 0 22.6s16.4 6.2 22.6 0L192 278.6 324.5 411.1z"/></svg></div>
