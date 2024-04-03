@@ -36,6 +36,12 @@ const usePhoneInput = "usePhoneInput" in chatStyle ? chatStyle["usePhoneInput"]:
 const autoOpen = "autoOpen" in chatStyle ? chatStyle["autoOpen"]: false;
 const splitScreen = "splitScreen" in chatStyle ? chatStyle["splitScreen"]: false;
 let chatWidth = "chatWidth" in chatStyle ? chatStyle["chatWidth"]: 575;
+let useThinkingTips = "useThinkingTips" in chatStyle ? chatStyle["useThinkingTips"]: false;
+const thinkingTips = "thinkingTips" in chatStyle ? chatStyle["thinkingTips"]: [];
+  
+if (thinkingTips.length == 0) {
+  useThinkingTips = false;
+}
 
 let activeAI = "active" in chatStyle ? chatStyle["active"]: true;
 if (!activeAI) {
@@ -84,6 +90,9 @@ const emailSubmitBgCol = "emailSubmitBgCol" in chatStyle ? chatStyle["emailSubmi
 const emailSubmitBgHoverCol = "emailSubmitBgHoverCol" in chatStyle ? chatStyle["emailSubmitBgHoverCol"] : "#823DA5";
 const emailSubmitIconCol = "emailSubmitIconCol" in chatStyle ? chatStyle["emailSubmitIconCol"] : "#ffffff";
 const emailSubmitIconHoverCol = "emailSubmitIconHoverCol" in chatStyle ? chatStyle["emailSubmitIconHoverCol"] : "#ffffff";
+const tipsTextCol = "tipsTextCol" in chatStyle ? chatStyle["tipsTextCol"] : "#f9f9f9";
+const tipsBgCol = "tipsBgCol" in chatStyle ? chatStyle["tipsBgCol"] : "#282731";
+  
 
 // Applying dynamic style here
 var newStyleTag = document.createElement('style');
@@ -109,6 +118,10 @@ var dynamicAddedCSS = `.awsme-sidebar {
     }
     .awsme-ai-chat .awsme-chat-row-wrapper .awsme-message {
       color: ${chatTextCol};
+    }
+    .awsme-thinking-tips {
+      color: ${tipsTextCol};
+      background-color: ${tipsBgCol};
     }
     .awsme-ai-chat .awsme-chat-input {
       background: ${inputBgCol};
@@ -409,7 +422,6 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
     }
 
 
-
     // AI loader indicator HTML template
     function loaderIndicatorGen() {
       let loader = `<div class="awsme-typing-indicator">
@@ -418,6 +430,26 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
                   <span></span>
                 </div>`
       return loader;
+    }
+    
+    // Thinking tips indicator
+    function tipsLoader(div) {
+      let i = Math.round(Math.random() * (thinkingTips.length-1));
+      let html = `<p class="awsme-thinking-tips fade-in-out">${thinkingTips[i]}</p>`;
+      div.innerHTML += html;
+      
+      let interval = setInterval(() => {
+        i += 1;
+        if (i == thinkingTips.length) {
+          i = 0;
+        }
+        let tip = thinkingTips[i];
+        div.querySelector(".awsme-thinking-tips").remove();
+        
+        let html = `<p class="awsme-thinking-tips fade-in-out">${tip}</p>`;
+        div.innerHTML += html;
+      }, 5000)
+      return interval;
     }
 
     // AI RESPONSE AND CHAT LOGIC
@@ -1035,15 +1067,24 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       // Add loading indicator
       let responseDiv = document.querySelector(`#${uniqueId}`);
       let responseParent = responseDiv.parentNode;
+      
+      let tipsInterval;
       responseParent.innerHTML += loaderIndicatorGen();
+      if (useThinkingTips) {
+        tipsInterval = tipsLoader(responseParent);
+      }
 
       // Wait for AI response
       let action_data;
       let aiResponse;
       [aiResponse, action_data] = await getAIResponse(inputText);
-
+      
       // Remove load indicator
       responseParent.querySelector(".awsme-typing-indicator").remove()
+      if (useThinkingTips) {
+        clearInterval(tipsInterval);
+        responseParent.querySelector(".awsme-thinking-tips").remove()
+      }
 
       // Write out AI response
       responseDiv = document.querySelector(`#${uniqueId}`);
