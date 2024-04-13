@@ -80,6 +80,9 @@ const linkNormalCol = "linkNormalCol" in chatStyle ? chatStyle["linkNormalCol"] 
 const linkHoverCol = "linkHoverCol" in chatStyle ? chatStyle["linkHoverCol"] : "#ffffff";
 const linkBgNormalCol = "linkBgNormalCol" in chatStyle ? chatStyle["linkBgNormalCol"] : "#00000000";
 const linkBgHoverCol = "linkBgHoverCol" in chatStyle ? chatStyle["linkBgHoverCol"] : "#00000000";
+  
+const inChatLinkCol = "inChatLinkCol" in chatStyle ? chatStyle["inChatLinkCol"] : "#BE0BB3";
+const inChatLinkHoverCol = "inChatLinkHoverCol" in chatStyle ? chatStyle["inChatLinkHoverCol"] : "#f9f9f9";
 
 const emailBoxBgCol = "emailBoxBgCol" in chatStyle ? chatStyle["emailBoxBgCol"] : "#f9f9f9";
 const emailBoxBrCol = "emailBoxBrCol" in chatStyle ? chatStyle["emailBoxBrCol"] : "#dddddd";
@@ -123,6 +126,9 @@ var dynamicAddedCSS = `.awsme-sidebar {
       color: ${tipsTextCol};
       background-color: ${tipsBgCol};
     }
+    .awsme-scroll-down {
+      border: 2px solid ${chatTextCol};
+    }
     .awsme-ai-chat .awsme-chat-input {
       background: ${inputBgCol};
     }
@@ -163,7 +169,14 @@ var dynamicAddedCSS = `.awsme-sidebar {
       color: ${linkHoverCol};
       background-color: ${linkBgHoverCol};
     }
-
+    
+    .awsme-response-link {
+      color: ${inChatLinkCol};
+    }
+    .awsme-response-link:hover {
+      color: ${inChatLinkHoverCol};
+    }
+    
     .awsme-chat-area::-webkit-scrollbar {
       width: 10px; 
       background: ${chatBgCol}; 
@@ -249,6 +262,10 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
           <div class="awsme-send-icon"><svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path d="M3.4 78.3c-6-12-3.9-26.5 5.3-36.3s23.5-12.7 35.9-7.5l448 192c11.8 5 19.4 16.6 19.4 29.4s-7.6 24.4-19.4 29.4l-448 192c-12.3 5.3-26.7 2.3-35.9-7.5s-11.3-24.3-5.3-36.3L92.2 256 3.4 78.3zM120 272L32 448 442.7 272H120zm322.7-32L32 64l88 176H442.7z"/></svg></i></div>
         </div>
       </div>
+      
+      <div class="awsme-scroll-down">
+        <svg style="height:20px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="M169.4 470.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L224 370.8 224 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 306.7L54.6 265.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"/></svg>
+      </div>
     </div>
   </div>
 </div>`
@@ -301,10 +318,13 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
   chatWidth = screen.width > chatWidth ? chatWidth:screen.width;
   const triggerButton = document.querySelector('.awsme-trigger');
   const hideTriggerButton = document.querySelector('.awsme-hide-trigger-btn');
+  const scrollDownButton = document.querySelector('.awsme-scroll-down');
   const sendButton = document.querySelector('.awsme-send-icon');
   const closeButton = document.querySelector('.awsme-close-x');
   const sidebar = document.querySelector('.awsme-sidebar');
   const triggerWidth = triggerButton.offsetWidth;
+  const userInput = document.querySelector(".awsme-user-input");
+  const messageArea = document.querySelector(".awsme-chat-area"); // Where messages will be displayed
 
   const reviewIcons = ['<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path d="M288.8 81.7c3.5-12.8 16.7-20.3 29.5-16.8s20.3 16.7 16.8 29.5l-4.5 16.4c-5.5 20.2-13.9 39.3-24.7 56.9c-3.1 4.9-3.2 11.1-.4 16.2s8.2 8.2 14 8.2H448c17.7 0 32 14.3 32 32c0 11.3-5.9 21.3-14.8 27c-7.2 4.6-9.5 13.9-5.3 21.3c2.6 4.6 4.1 10 4.1 15.7c0 12.4-7 23.1-17.3 28.5c-4.2 2.2-7.3 6.1-8.3 10.8s.1 9.5 3 13.2c4.2 5.4 6.7 12.2 6.7 19.5c0 14.2-9.2 26.3-22.1 30.4c-7.8 2.5-12.4 10.6-10.7 18.6c.5 2.2 .7 4.5 .7 6.9c0 17.7-14.3 32-32 32H294.5c-15.8 0-31.2-4.7-44.4-13.4l-38.5-25.7c-9-6-16.6-13.7-22.4-22.6c-4.9-7.4-14.8-9.4-22.2-4.6s-9.4 14.8-4.6 22.2c8.1 12.3 18.7 23.1 31.4 31.6l38.5 25.7c18.4 12.3 40 18.8 62.1 18.8H384c35.3 0 64-28.7 64-64l0-.6c19.1-11.1 32-31.7 32-55.4c0-8.7-1.8-17.1-4.9-24.7C487.9 323.6 496 306.8 496 288c0-6.5-1-12.8-2.8-18.7C504.8 257.7 512 241.7 512 224c0-35.3-28.7-64-64-64H346.4c6.2-13.1 11.3-26.7 15.1-40.9l4.5-16.4c8.1-29.8-9.5-60.6-39.3-68.8s-60.6 9.5-68.8 39.3l-4.5 16.4c-8.9 32.6-29.6 60.8-58.2 79l-3.1 2c-11.8 7.5-21.7 17.1-29.5 28.2c-5.1 7.2-3.3 17.2 4 22.3s17.2 3.3 22.3-4c5.4-7.7 12.2-14.4 20.4-19.5l3.1-2c35.3-22.4 60.9-57.2 71.9-97.5l4.5-16.4zM32 224H96V448H32V224zM0 224V448c0 17.7 14.3 32 32 32H96c17.7 0 32-14.3 32-32V224c0-17.7-14.3-32-32-32H32c-17.7 0-32 14.3-32 32z"/></svg>',
                       '<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512"><path d="M480 256A224 224 0 1 1 32 256a224 224 0 1 1 448 0zM256 0a256 256 0 1 0 0 512A256 256 0 1 0 256 0zM176.4 232a24 24 0 1 0 0-48 24 24 0 1 0 0 48zm184-24a24 24 0 1 0 -48 0 24 24 0 1 0 48 0zM176 336c-8.8 0-16 7.2-16 16s7.2 16 16 16H336c8.8 0 16-7.2 16-16s-7.2-16-16-16H176z"/></svg>',
@@ -344,6 +364,9 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
     let openTrigger = getWithExpiry('open_trigger_'+awsmeId) != null ? getWithExpiry('open_trigger_'+awsmeId):true;
     let usedInteractions = [];
     let firstClick = true;
+    
+    const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
+    const urlRegex = /https?:\/\/[^\s$.?#].[^\s]*/g;
     
     function openSidebar() {
       sidebar.style.right = '0';
@@ -402,11 +425,26 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
     closeButton.addEventListener('click', () => {
       closeSidebar();
     });
-    
+    scrollDownButton.addEventListener('click', () => {
+      messageArea.scrollTo({
+        top: messageArea.scrollHeight,
+        behavior: 'smooth'
+      });
+    });
     hideTriggerButton.addEventListener('click', () => {
       hideTrigger();
     });
-
+    
+    messageArea.addEventListener('scroll', function() {
+      var element = this;
+      if (element.scrollHeight - element.scrollTop === element.clientHeight) {
+          scrollDownButton.classList.remove('visible');
+      } else {
+        scrollDownButton.classList.add('visible');
+      }
+    });
+    
+    
     function postmark_send_email_template(templateId, templateModel) {
       let response = fetch('https://awsme.co/api/send-email/', {
             method: 'POST',
@@ -420,7 +458,6 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
             }),
         })
     }
-
 
     // AI loader indicator HTML template
     function loaderIndicatorGen() {
@@ -451,41 +488,45 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       }, 5000)
       return interval;
     }
-
+    
     // AI RESPONSE AND CHAT LOGIC
-    const userInput = document.querySelector(".awsme-user-input");
-    const messageArea = document.querySelector(".awsme-chat-area"); // Where messages will be displayed
-
     // AI write functionality
     function AITextGen(element, textList) {
       let index = 0;
+      let parent = element.parentElement;
       let interval = setInterval(() => {
           if (index < textList.length) {
             let item = textList[index];
             if (typeof item === 'string') {
-              element.innerHTML += item;
+              if (item.includes("awsme-chat-gif") || item.includes("awsme-video-action") || item.includes("awsme-link-action")) {
+                parent.innerHTML += item;
+              }
+              else {
+                element.innerHTML += item;
+              }
             }
             else if (item instanceof HTMLElement) {
-              element.appendChild(item);
+              parent.appendChild(item);
             }
             
-            if (index % 25 == 0) {
-                messageArea.scrollTop = messageArea.scrollHeight;
+            if (index%25 == 0) {
+              if (messageArea.scrollHeight - messageArea.scrollTop === messageArea.clientHeight) {
+                scrollDownButton.classList.remove('visible');
+              } else {
+                scrollDownButton.classList.add('visible');
+              }
             }
             index++;
           }
           else {
-            setTimeout(function() {
-              messageArea.scrollTop = messageArea.scrollHeight;
-            }, 200);
             setTimeout(function() {
               setVideoClickAction();
               setLinkClickAction();
             }, 500);
             clearInterval(interval);
             setFormAction();
-            if (element.parentElement.parentElement.querySelector(".awsme-review-options")) {
-              element.parentElement.parentElement.querySelector(".awsme-review-options").style.opacity = 1;
+            if (parent.parentElement.querySelector(".awsme-review-options")) {
+              parent.parentElement.querySelector(".awsme-review-options").style.opacity = 1;
             }
           }
       }, 20)
@@ -540,7 +581,10 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       }
       let newLink = links[links.length-1];
       let action_id = newLink.id;
-      newLink.onclick = function() { updateMetric('', 'action', action_id, 'clicks') };
+      let recentLinks = document.querySelectorAll(".awsme-ai-chat .awsme-chat-area #" + action_id);
+      for (let link of recentLinks) {
+        link.onclick = function() { updateMetric('', 'action', action_id, 'clicks') };
+      }
     }
 
     // Function for connecting video start action
@@ -605,7 +649,6 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       }
       return "";
     }
-    
      
     function getGifHTML(url, ratio) {
         let gifHeight = 360 * ratio;
@@ -616,9 +659,44 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
     function responseHTMLModifier(string, className, action_data) {
       let action_id = action_data[0]
       let newString = string.replace(/<br>/g, "§");
+      
+      // Get emails and links from the response
+      let emails = newString.match(emailRegex) || [];
+      let urls = newString.match(urlRegex) || [];
+      
+      for (let email of emails) {
+        newString = newString.replace(email, "⌘");
+      }
+      for (let url of urls) {
+        newString = newString.replace(url, "☼");
+      }
+      
+      // Split text into list of characters
       let stringList = newString.split("");
+      
       stringList = stringList.map(item => item.replace(/§/g, "<br>"))
-      if (action_id.length > 10 && !usedInteractions.includes(action_id)) {
+      let lastIndex = 0;
+      for (let email of emails) {
+        for (let i=lastIndex; i < stringList.length; i++) {
+          if (stringList[i] == "⌘") {
+            stringList[i] = `<a class="awsme-response-link" target="_blank" href="mailto:${email}">${email}</a>`;
+            lastIndex = i;
+            break
+          }
+        }
+      }
+      lastIndex = 0;
+      for (let url of urls) {
+        for (let i=lastIndex; i < stringList.length; i++) {
+          if (stringList[i] == "☼") {
+            stringList[i] = `<a class="awsme-response-link" target="_blank" href="${url}">${url}</a>`;
+            lastIndex = i;
+            break
+          }
+        }
+      }
+    
+      if (action_id.length > 0 && !usedInteractions.includes(action_id)) {
         usedInteractions.push(action_id)
         let action_url = action_data[1]
         let action_cta = action_data[2]
@@ -627,18 +705,34 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
         updateMetric('', 'action', action_id, 'views');
         let ctaHTML = "";
         if (action_type == "link") {
-          ctaHTML = `<a class="${className} awsme-link-action awsme-cta-callout" id="${action_id}" href="${action_url}" target="_blank">
-            <span class="awsme-cta-callout-label">${action_cta}</span>
+          let cta1 = action_cta.split("-##-##-")[0]
+          let url1 = action_url.split("-##-##-")[0]
+          
+          let ctaHTML1 = `<a class="${className} awsme-link-action awsme-cta-callout" id="${action_id}" href="${url1}" target="_blank">
+            <span class="awsme-cta-callout-label">${cta1}</span>
             </a>`
+          stringList.push(ctaHTML1);
+          
+          if (action_cta.split("-##-##-").length > 1 && action_url.split("-##-##-").length > 1) {
+            let cta2 = action_cta.split("-##-##-")[1]
+            let url2 = action_url.split("-##-##-")[1]
+            let ctaHTML2 = `<a class="${className} awsme-link-action awsme-cta-callout" id="${action_id}" href="${url2}" target="_blank">
+            <span class="awsme-cta-callout-label">${cta2}</span>
+            </a>`
+            stringList.push(ctaHTML2);
+          }
         }
         else if (action_type == "video") {
           ctaHTML = getIframeFromUrl(action_url, action_id);
+          if (chatHTML != "") {
+            stringList.push(ctaHTML);
+          }
         }
         else if (action_type == "gif") {
           ctaHTML = getGifHTML(action_url, action_ratio);
-        }
-        if (chatHTML != "") {
-          stringList.push(ctaHTML);
+          if (chatHTML != "") {
+            stringList.push(ctaHTML);
+          }
         }
         else {
           console.log(action_type);
@@ -1062,7 +1156,6 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       uniqueId = generateUniqueId();
       // Ai chat row
       messageArea.innerHTML += responseRowGen(true, "", uniqueId, true)
-      messageArea.scrollTop = messageArea.scrollHeight;
 
       // Add loading indicator
       let responseDiv = document.querySelector(`#${uniqueId}`);
@@ -1073,6 +1166,10 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       if (useThinkingTips) {
         tipsInterval = tipsLoader(responseParent);
       }
+      messageArea.scrollTo({
+        top: messageArea.scrollHeight,
+        behavior: 'smooth'
+      });
 
       // Wait for AI response
       let action_data;
