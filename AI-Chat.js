@@ -413,6 +413,7 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
     let openTrigger = getWithExpiry('open_trigger_'+awsmeId) != null ? getWithExpiry('open_trigger_'+awsmeId):true;
     let usedInteractions = [];
     let firstClick = true;
+    let tipsInterval;
     
     const emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/g;
     const urlRegex = /https?:\/\/[^\s$.?#].[^\s]*/g;
@@ -532,6 +533,30 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       div.innerHTML += html;
       div.style.minHeight = div.offsetHeight + "px";
       let interval = setInterval(() => {
+        div =  document.querySelector(className)
+        i += 1;
+        if (i == thinkingTips.length) {
+          i = 0;
+        }
+        let tip = thinkingTips[i];
+        let html = `<div class="awsme-thinking-tips fade-in-out"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M256 32a224 224 0 1 1 0 448 224 224 0 1 1 0-448zm0 480A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM208 352c-8.8 0-16 7.2-16 16s7.2 16 16 16h96c8.8 0 16-7.2 16-16s-7.2-16-16-16H272V240c0-8.8-7.2-16-16-16H216c-8.8 0-16 7.2-16 16s7.2 16 16 16h24v96H208zm48-168a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>
+        <p>${tip}<p/></div>`;
+        div.innerHTML += html;
+        if (div.offsetHeight > parseInt(div.style.minHeight)) {
+          div.style.minHeight = div.offsetHeight + "px"; 
+        }
+      }, tipsDuration*1000)
+      return interval;
+    }
+    function tipsLoader2(className) {
+      let div =  document.querySelector(className)
+      let i = Math.round(Math.random() * (thinkingTips.length-1));
+      let html = `<div class="awsme-thinking-tips fade-in-out"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M256 32a224 224 0 1 1 0 448 224 224 0 1 1 0-448zm0 480A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM208 352c-8.8 0-16 7.2-16 16s7.2 16 16 16h96c8.8 0 16-7.2 16-16s-7.2-16-16-16H272V240c0-8.8-7.2-16-16-16H216c-8.8 0-16 7.2-16 16s7.2 16 16 16h24v96H208zm48-168a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>
+      <p>${thinkingTips[i]}</p></div>`;
+      div.innerHTML += html;
+      div.style.minHeight = div.offsetHeight + "px";
+      let interval = setInterval(() => {
+        div =  document.querySelector(className)
         i += 1;
         if (i == thinkingTips.length) {
           i = 0;
@@ -551,8 +576,7 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
     if (useThinkingTips) {
       if (tipsPos == "aboveGreeting" || tipsPos == "windowHeader") {
         setTimeout(() => {
-          let thinkingTipsArea = document.querySelector(".awsme-tips-con");
-          let tipsInterval = tipsLoader(thinkingTipsArea);
+          tipsInterval = tipsLoader2(".awsme-tips-con");
         }, 1000);
       }
     }
@@ -1229,7 +1253,6 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       let responseDiv = document.querySelector(`#${uniqueId}`);
       let responseParent = responseDiv.parentNode;
       
-      let tipsInterval;
       responseParent.innerHTML += loaderIndicatorGen();
       if (useThinkingTips) {
         if (tipsPos == "underIcon") {
@@ -1249,9 +1272,9 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       // Remove load indicator
       responseParent.querySelector(".awsme-typing-indicator").remove();
       if (useThinkingTips) {
-        clearInterval(tipsInterval);
         if (tipsPos == "underIcon") {
           responseParent.querySelector(".awsme-thinking-tips").remove();
+          clearInterval(tipsInterval);
         }
       }
 
