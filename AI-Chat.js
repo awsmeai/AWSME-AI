@@ -548,6 +548,15 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       return interval;
     }
     
+    if (useThinkingTips) {
+      if (tipsPos == "aboveGreeting" || tipsPos == "windowHeader") {
+        setTimeout(() => {
+          let thinkingTipsArea = document.querySelector(".awsme-tips-con");
+          let tipsInterval = tipsLoader(thinkingTipsArea);
+        }, 1000);
+      }
+    }
+    
     // AI RESPONSE AND CHAT LOGIC
     // AI write functionality
     function AITextGen(element, textList) {
@@ -1222,16 +1231,9 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       
       let tipsInterval;
       responseParent.innerHTML += loaderIndicatorGen();
-      let thinkingTipsArea = document.querySelector(".awsme-tips-con");
       if (useThinkingTips) {
         if (tipsPos == "underIcon") {
           tipsInterval = tipsLoader(responseParent);
-        }
-        else if (tipsPos == "aboveGreeting") {
-          tipsInterval = tipsLoader(thinkingTipsArea);
-        }
-        else if (tipsPos == "windowHeader") {
-          tipsInterval = tipsLoader(thinkingTipsArea);
         }
       }
       messageArea.scrollTo({
@@ -1250,12 +1252,6 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
         clearInterval(tipsInterval);
         if (tipsPos == "underIcon") {
           responseParent.querySelector(".awsme-thinking-tips").remove();
-        }
-        else if (tipsPos == "aboveGreeting") {
-          thinkingTipsArea.innerHTML = "";
-        }
-        else if (tipsPos == "windowHeader") {
-          thinkingTipsArea.innerHTML = "";
         }
       }
 
