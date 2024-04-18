@@ -38,6 +38,11 @@ const splitScreen = "splitScreen" in chatStyle ? chatStyle["splitScreen"]: false
 let chatWidth = "chatWidth" in chatStyle ? chatStyle["chatWidth"]: 575;
 let useThinkingTips = "useThinkingTips" in chatStyle ? chatStyle["useThinkingTips"]: false;
 const thinkingTips = "thinkingTips" in chatStyle ? chatStyle["thinkingTips"]: [];
+const tipsPos = "tipsPos" in chatStyle ? chatStyle["tipsPos"]: [];
+const showTriggerHand = "showTriggerHand" in chatStyle ? chatStyle["showTriggerHand"]: true;
+const showTriggerPhoto = "showTriggerPhoto" in chatStyle ? chatStyle["showTriggerPhoto"]: true;
+const showTriggerClose = "showTriggerClose" in chatStyle ? chatStyle["showTriggerClose"]: true;
+const tipsDuration = "thinkingTipsDuration" in chatStyle ? chatStyle["thinkingTipsDuration"]: 5;
   
 if (thinkingTips.length == 0) {
   useThinkingTips = false;
@@ -82,7 +87,7 @@ const linkBgNormalCol = "linkBgNormalCol" in chatStyle ? chatStyle["linkBgNormal
 const linkBgHoverCol = "linkBgHoverCol" in chatStyle ? chatStyle["linkBgHoverCol"] : "#00000000";
   
 const inChatLinkCol = "inChatLinkCol" in chatStyle ? chatStyle["inChatLinkCol"] : "#BE0BB3";
-const inChatLinkHoverCol = "inChatLinkHoverCol" in chatStyle ? chatStyle["inChatLinkHoverCol"] : "#f9f9f9";
+const inChatLinkHoverCol = "inChatLinkHoverCol" in chatStyle ? chatStyle["inChatLinkHoverCol"] : "#BE0BB3";
 
 const emailBoxBgCol = "emailBoxBgCol" in chatStyle ? chatStyle["emailBoxBgCol"] : "#f9f9f9";
 const emailBoxBrCol = "emailBoxBrCol" in chatStyle ? chatStyle["emailBoxBrCol"] : "#dddddd";
@@ -95,6 +100,8 @@ const emailSubmitIconCol = "emailSubmitIconCol" in chatStyle ? chatStyle["emailS
 const emailSubmitIconHoverCol = "emailSubmitIconHoverCol" in chatStyle ? chatStyle["emailSubmitIconHoverCol"] : "#ffffff";
 const tipsTextCol = "tipsTextCol" in chatStyle ? chatStyle["tipsTextCol"] : "#f9f9f9";
 const tipsBgCol = "tipsBgCol" in chatStyle ? chatStyle["tipsBgCol"] : "#282731";
+const closeTriggerBgCol = "closeTriggerBgCol" in chatStyle ? chatStyle["closeTriggerBgCol"] : "#171621";
+const closeTriggerIconCol = "closeTriggerIconCol" in chatStyle ? chatStyle["closeTriggerIconCol"] : "#f9f9f9";
   
 
 // Applying dynamic style here
@@ -109,6 +116,13 @@ var dynamicAddedCSS = `.awsme-sidebar {
     .awsme-trigger-con {
       ${triggerPosCSS}
     }
+    .awsme-hide-trigger-btn {
+      background-color: ${closeTriggerBgCol};
+    }
+    .awsme-hide-trigger-btn-arrows::before, 
+    .awsme-hide-trigger-btn-arrows::after {
+      border: 2px solid ${closeTriggerIconCol};
+    }
     .awsme-ai-chat .awsme-trigger p {
       color: ${triggerTextCol};
     }
@@ -122,10 +136,42 @@ var dynamicAddedCSS = `.awsme-sidebar {
     .awsme-ai-chat .awsme-chat-row-wrapper .awsme-message {
       color: ${chatTextCol};
     }
-    .awsme-thinking-tips {
+    .fade-in-out {
+      animation: fadeInOutAnimation ${tipsDuration}s ease-out forwards;
+    }
+    .awsme-thinking-tips p {
       color: ${tipsTextCol};
+    }
+    .awsme-thinking-tips {
       background-color: ${tipsBgCol};
     }
+    .awsme-thinking-tips svg {
+      fill: ${tipsTextCol};
+    }
+    ${tipsPos=="underIcon" ? `
+      .awsme-thinking-tips {
+        border-radius: 5px;
+        transform: translateX(-5px);
+        margin-top: 38px;
+      }
+    `:""}
+    ${tipsPos=="aboveGreeting" ? `
+      .awsme-tips-con {
+        margin-right: -20px;
+        margin-top: -20px;
+        width: ${chatWidth}px !important;
+      }
+    `:""}
+    ${tipsPos=="windowHeader" ? `
+      .awsme-tips-con {
+        margin-top: 10px;
+        width: 100%;
+      }
+      .awsme-thinking-tips {
+        border-radius: 5px;
+      }
+    `:""}
+    
     .awsme-scroll-down {
       border: 2px solid ${chatTextCol};
     }
@@ -226,13 +272,14 @@ document.head.appendChild(newStyleTag);
 const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:1000000; position: relative;">
     <div class="awsme-trigger-con">
       <div class="awsme-trigger-con-grid">
-        <div class="awsme-hide-trigger-btn">
-          <div class="awsme-hide-trigger-btn-arrows"></div>
-        </div>
+        ${showTriggerClose ? 
+          `<div class="awsme-hide-trigger-btn">
+             <div class="awsme-hide-trigger-btn-arrows"></div>
+           </div>`:""}
         <div class="awsme-trigger">
-          <span class="awsme-wave">👋</span> 
+          ${showTriggerHand ? `<span class="awsme-wave">👋</span>`: ""}
           <div class="awsme-inner-trigger">
-            <div class="awsme-profile awsme-bot-image" style="margin-right:10px; border:1px solid white; width:30px; height:30px;"></div>
+            ${showTriggerPhoto ? `<div class="awsme-profile awsme-bot-image" style="margin-right:10px; border:1px solid white; width:30px; height:30px;"></div>`:""}
             <p style="margin-bottom: 0px;">
               ${triggerLabel}
             </p>
@@ -250,10 +297,12 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       <div class="awsme-top-paragraph">
         ${paragraph}
       </div>
+      ${tipsPos == "windowHeader" ? `<div class="awsme-tips-con"></div>`:""}
     </div>
 
     <div class="awsme-sidebar-inner">
       <div class="awsme-chat-area">
+        ${tipsPos == "aboveGreeting" ? `<div class="awsme-tips-con"></div>`:""}
       </div>
 
       <div class="awsme-input-area">
@@ -402,12 +451,16 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
     }
     function showTrigger() {
       triggerButton.style.right = 0;
-      hideTriggerButton.style.display = "block";
+      if (showTriggerClose) {
+        hideTriggerButton.style.display = "block";
+      }
       setWithExpiry('open_trigger_'+awsmeId, true, 3600000)
     }
     function hideTrigger() {
       triggerButton.style.right = (64-triggerWidth) + "px";
-      hideTriggerButton.style.display = "none";
+      if (showTriggerClose) {
+        hideTriggerButton.style.display = "none";
+      }
       setWithExpiry('open_trigger_'+awsmeId, false, 3600000)
     }
     
@@ -431,9 +484,11 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
         behavior: 'smooth'
       });
     });
-    hideTriggerButton.addEventListener('click', () => {
-      hideTrigger();
-    });
+    if (showTriggerClose) {
+      hideTriggerButton.addEventListener('click', () => {
+        hideTrigger();
+      });
+    }
     
     messageArea.addEventListener('scroll', function() {
       var element = this;
@@ -472,9 +527,10 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
     // Thinking tips indicator
     function tipsLoader(div) {
       let i = Math.round(Math.random() * (thinkingTips.length-1));
-      let html = `<p class="awsme-thinking-tips fade-in-out">${thinkingTips[i]}</p>`;
+      let html = `<div class="awsme-thinking-tips fade-in-out"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M256 32a224 224 0 1 1 0 448 224 224 0 1 1 0-448zm0 480A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM208 352c-8.8 0-16 7.2-16 16s7.2 16 16 16h96c8.8 0 16-7.2 16-16s-7.2-16-16-16H272V240c0-8.8-7.2-16-16-16H216c-8.8 0-16 7.2-16 16s7.2 16 16 16h24v96H208zm48-168a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>
+      <p>${thinkingTips[i]}</p></div>`;
       div.innerHTML += html;
-      
+      div.style.minHeight = div.offsetHeight + "px";
       let interval = setInterval(() => {
         i += 1;
         if (i == thinkingTips.length) {
@@ -482,10 +538,13 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
         }
         let tip = thinkingTips[i];
         div.querySelector(".awsme-thinking-tips").remove();
-        
-        let html = `<p class="awsme-thinking-tips fade-in-out">${tip}</p>`;
+        let html = `<div class="awsme-thinking-tips fade-in-out"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M256 32a224 224 0 1 1 0 448 224 224 0 1 1 0-448zm0 480A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM208 352c-8.8 0-16 7.2-16 16s7.2 16 16 16h96c8.8 0 16-7.2 16-16s-7.2-16-16-16H272V240c0-8.8-7.2-16-16-16H216c-8.8 0-16 7.2-16 16s7.2 16 16 16h24v96H208zm48-168a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>
+        <p>${tip}<p/></div>`;
         div.innerHTML += html;
-      }, 5000)
+        if (div.offsetHeight > parseInt(div.style.minHeight)) {
+          div.style.minHeight = div.offsetHeight + "px"; 
+        }
+      }, tipsDuration*1000)
       return interval;
     }
     
@@ -1163,8 +1222,17 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       
       let tipsInterval;
       responseParent.innerHTML += loaderIndicatorGen();
+      let thinkingTipsArea = document.querySelector(".awsme-tips-con");
       if (useThinkingTips) {
-        tipsInterval = tipsLoader(responseParent);
+        if (tipsPos == "underIcon") {
+          tipsInterval = tipsLoader(responseParent);
+        }
+        else if (tipsPos == "aboveGreeting") {
+          tipsInterval = tipsLoader(thinkingTipsArea);
+        }
+        else if (tipsPos == "windowHeader") {
+          tipsInterval = tipsLoader(thinkingTipsArea);
+        }
       }
       messageArea.scrollTo({
         top: messageArea.scrollHeight,
@@ -1177,10 +1245,18 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       [aiResponse, action_data] = await getAIResponse(inputText);
       
       // Remove load indicator
-      responseParent.querySelector(".awsme-typing-indicator").remove()
+      responseParent.querySelector(".awsme-typing-indicator").remove();
       if (useThinkingTips) {
         clearInterval(tipsInterval);
-        responseParent.querySelector(".awsme-thinking-tips").remove()
+        if (tipsPos == "underIcon") {
+          responseParent.querySelector(".awsme-thinking-tips").remove();
+        }
+        else if (tipsPos == "aboveGreeting") {
+          thinkingTipsArea.innerHTML = "";
+        }
+        else if (tipsPos == "windowHeader") {
+          thinkingTipsArea.innerHTML = "";
+        }
       }
 
       // Write out AI response
