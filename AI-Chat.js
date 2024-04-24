@@ -157,9 +157,9 @@ var dynamicAddedCSS = `.awsme-sidebar {
     `:""}
     ${tipsPos=="aboveGreeting" ? `
       .awsme-tips-con {
-        margin-right: -20px;
         margin-top: -20px;
-        width: ${chatWidth}px !important;
+        margin-right: -20px;
+        width: calc(100% + 40px) !important;
       }
     `:""}
     ${tipsPos=="windowHeader" ? `
