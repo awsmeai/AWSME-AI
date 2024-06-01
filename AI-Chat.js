@@ -921,7 +921,7 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
             },
             body: JSON.stringify({
                 messages: conversation,
-                user_id: awsmeId,
+                team_id: awsmeId,
                 lead_stage: lead_stage,
                 lead_ref: lead_ref,
                 conv_ref: conversationId,
@@ -968,7 +968,7 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
               phone: phone,
               messages: conversation,
               conv_ref: conversationId,
-              user_id: awsmeId
+              team_id: awsmeId
           }),
       })
       response = await response.text();
@@ -1093,7 +1093,7 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
           question: question,
           answer: answer,
           rating: rating,
-          user_id: awsmeId
+          team_id: awsmeId
         }),
       })
       response = await response.text();
@@ -1114,7 +1114,7 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
         body: JSON.stringify({
           ref: ref,
           rating: rating,
-          user_id: awsmeId
+          team_id: awsmeId
         }),
       })
       response = await response.text();
@@ -1334,7 +1334,7 @@ async function updateAIPage(url) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      user_id: awsmeId,
+      team_id: awsmeId,
       url: url
     }),
   })
@@ -1358,7 +1358,7 @@ async function updateMetric(team_metric="", subcollection="", sub_doc_ref="", su
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      user_id: awsmeId,
+      team_id: awsmeId,
       team_metric: team_metric,
       subcollection: subcollection,
       sub_doc_ref: sub_doc_ref,
