@@ -7,22 +7,89 @@
       opacity: 1;
   }
 }
-.awsme-fade-in {
-  animation-name: fadeAnimation;
-  animation-duration: 0.5s;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: 1;
+@keyframes fadeInOutAnimation {
+  0% {
+    opacity: 0;
+  }
+  16% {
+    opacity: 1;
+  }
+  84% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
+
+.awsme-fade-in {
+  animation-name: fadeAnimation !important;
+  animation-duration: 1s !important;
+  animation-timing-function: ease-in-out !important;
+  animation-iteration-count: 1 !important;
+}
+
+.awsme-trigger-con {
+  position: fixed;
+  right: 0px;
+  transition: 0.5s ease-out;
+}
+.awsme-trigger-con-grid {
+  position: relative;
+}
 .awsme-trigger {
+position: fixed;
+right: 0px;
 cursor: pointer !important;
 padding: 15px;
 font-size: 16px;
-position: fixed;
-right: 0px;
 -webkit-border-radius: 5px 0 0 5px;
 border-radius: 5px 0 0 5px;
-max-width: 200px;
+transition: 0.5s ease-out;
+}
+
+.awsme-inner-trigger {
+  display: flex; 
+  margin-left:8px;
+  align-items: center;
+}
+
+.awsme-hide-trigger-btn {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-radius: 15px;
+  top: -40px;
+  right: 10px;
+  cursor: pointer;
+}
+.awsme-hide-trigger-btn-arrows {
+  position: relative;
+  width: 28px;
+  height: 28px;
+}
+.awsme-hide-trigger-btn-arrows::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-left: none !important;
+  border-bottom: none !important;
+  position:absolute;
+  right: calc(50% + 5px);;
+  top: 50%;
+  transform: translate(50%, -50%) rotate(45deg);
+}
+.awsme-hide-trigger-btn-arrows::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-left: none !important;
+  border-bottom: none !important;
+  position:absolute;
+  right: calc(50% - 3px);;
+  top: 50%;
+  transform: translate(50%, -50%) rotate(45deg);
 }
 
 @keyframes wave-animation {
@@ -67,6 +134,7 @@ width: 100%;
 flex-direction: column;
 flex-grow: 1;
 overflow: hidden;
+position: relative;
 }
 .awsme-top-area {
 display: flex;
@@ -112,6 +180,33 @@ overflow-y: scroll;
 height: -webkit-fill-available;
 padding: 20px;
 width: 100%;
+scrollbar-width: none;
+-ms-overflow-style: none;
+}
+.awsme-chat-area::-webkit-scrollbar {
+  display: none;
+}
+
+.awsme-scroll-down {
+  position: absolute;
+  width: 36px;
+  height: 36px;
+  bottom: 115px;
+  right: 50%;
+  transform: translateX(50%);
+  background: rgba(0, 0, 0, 0);
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: opacity 0.3s ease-in, visibility 0.3s ease-in;
+  opacity: 0;
+  visibility: hidden;
+}
+.awsme-scroll-down.visible {
+  opacity: 1;
+  visibility: visible;
 }
 
 .awsme-input-area {
@@ -204,7 +299,7 @@ width: 100%;
 }
 .awsme-message, .awsme-message-content {
 overflow-x: hidden;
-display: flex;
+display: block;
 flex-direction: column;
 flex: 5;       
 padding: 5px;   
@@ -233,6 +328,7 @@ margin: 0 auto;
 animation: bulge 2s infinite ease-out;
 position: absolute;
 left: 50px;
+top: 5px;
 }
 
 .awsme-typing-indicator::before,
@@ -288,6 +384,29 @@ animation: blink 1s infinite 1s;
 }
 }
 
+.awsme-tips-con {
+  width: 100%;
+  transition: height 0.5s ease;
+}
+.awsme-thinking-tips {
+  padding: 6px 12px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.awsme-thinking-tips p {
+  text-align: left;
+  font-size: 18px;
+  font-weight: 400;
+  margin: 0;
+}
+.awsme-thinking-tips svg {
+  min-width: 20px;
+  height: 20px;
+  transform: translateY(4px);
+  margin-right: 10px;
+  margin-left: 3px;
+}
 
 /* Rich media elements css */
 .awsme-cta-callout {
