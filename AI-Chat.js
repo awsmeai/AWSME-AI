@@ -181,6 +181,9 @@ var dynamicAddedCSS = `.awsme-sidebar {
     .awsme-ai-chat .awsme-user-input {
       color: ${inputTextCol}; 
     }
+    .awsme-ai-chat .awsme-user-input::placeholder {
+      color: ${inputTextCol}; 
+    }
     .awsme-ai-chat .awsme-send-icon svg {
       fill: ${inputTextCol}; 
     }
@@ -533,11 +536,12 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       div.innerHTML += html;
       div.style.minHeight = div.offsetHeight + "px";
       let interval = setInterval(() => {
-        div =  document.querySelector(className)
         i += 1;
         if (i == thinkingTips.length) {
           i = 0;
         }
+        
+        div.querySelector(".awsme-thinking-tips").remove();
         let tip = thinkingTips[i];
         let html = `<div class="awsme-thinking-tips fade-in-out"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--!Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc.--><path d="M256 32a224 224 0 1 1 0 448 224 224 0 1 1 0-448zm0 480A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM208 352c-8.8 0-16 7.2-16 16s7.2 16 16 16h96c8.8 0 16-7.2 16-16s-7.2-16-16-16H272V240c0-8.8-7.2-16-16-16H216c-8.8 0-16 7.2-16 16s7.2 16 16 16h24v96H208zm48-168a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/></svg>
         <p>${tip}<p/></div>`;
