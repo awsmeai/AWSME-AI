@@ -249,7 +249,7 @@ var dynamicAddedCSS = `.awsme-sidebar {
         background-color: ${emailBoxBgCol};
         border: 1px solid ${emailBoxBrCol};
       }
-      .awsme-successful-submit {
+      .awsme-successful-submit p {
         color: ${emailBoxTextCol} !important;
       }
       .awsme-email-form input[type=email],
