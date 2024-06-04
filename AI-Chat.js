@@ -91,6 +91,7 @@ const inChatLinkHoverCol = "inChatLinkHoverCol" in chatStyle ? chatStyle["inChat
 
 const emailBoxBgCol = "emailBoxBgCol" in chatStyle ? chatStyle["emailBoxBgCol"] : "#f9f9f9";
 const emailBoxBrCol = "emailBoxBrCol" in chatStyle ? chatStyle["emailBoxBrCol"] : "#dddddd";
+const emailBoxTextCol = "emailBoxTextCol" in chatStyle ? chatStyle["emailBoxTextCol"] : "#000000";
 const emailInputBgCol = "emailInputBgCol" in chatStyle ? chatStyle["emailInputBgCol"] : "#ffffff";
 const emailInputBrCol = "emailInputBrCol" in chatStyle ? chatStyle["emailInputBrCol"] : "#dddddd";
 const emailInputTextCol = "emailInputTextCol" in chatStyle ? chatStyle["emailInputTextCol"] : "#0a090e";
@@ -245,8 +246,11 @@ var dynamicAddedCSS = `.awsme-sidebar {
     }
 
     .awsme-email-form-wrapper {
-       background-color: ${emailBoxBgCol};
+        background-color: ${emailBoxBgCol};
         border: 1px solid ${emailBoxBrCol};
+      }
+      .awsme-successful-submit {
+        color: ${emailBoxTextCol} !important;
       }
       .awsme-email-form input[type=email],
       .awsme-email-form input[type=text], 
