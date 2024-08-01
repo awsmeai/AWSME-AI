@@ -887,6 +887,7 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
 
     
     let conversation = "";
+    let allMessages = "";
     if (userName != "") {
       conversation += "{system: Greet the user by name in the next response, their name is: " + userName + "}";
     }
@@ -906,6 +907,7 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
           conversation = conversation.substring(conversation.indexOf('}') + 1).trim();
       }
       conversation += newMessage;
+      allMessages += newMessage;
       let new_session;
       if (firstEngagement) {
           new_session = true;
@@ -954,6 +956,7 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       reviewRefs.push("");
       questionsAndAnswers.push({"question": userMessage, "answer": message})
       conversation += `{assistant: ${message}}`;
+      allMessages += `{assistant: ${message}}`;
       conversation = conversation.replace(/{system:[^}]*}/g, '');
   
       return [message, action_data];
@@ -970,7 +973,7 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
               name: name,
               email: email, 
               phone: phone,
-              messages: conversation,
+              messages: allMessages,
               conv_ref: conversationId,
               team_id: awsmeId
           }),
