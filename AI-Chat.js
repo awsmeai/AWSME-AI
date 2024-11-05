@@ -903,7 +903,7 @@ const chatHTML = `<div class="awsme-ai-chat awsme-fade-in" style="z-index:100000
       let lead_stage = localStorage.getItem('lead_stage_'+awsmeId) != null ? localStorage.getItem('lead_stage_'+awsmeId): "";
       let lead_ref = localStorage.getItem('lead_ref_'+awsmeId) != null ? localStorage.getItem('lead_ref_'+awsmeId): "";
       let newMessage = `{user: ${userMessage}}`;
-      while (conversation.length > 2000 && conversation.match(/}/g).length > 2) {
+      while (conversation.length > 2000 && conversation.match(/}/g).length > 3) {
           conversation = conversation.substring(conversation.indexOf('}') + 1).trim();
       }
       conversation += newMessage;
